@@ -312,6 +312,24 @@ dotnet_diagnostic.IDE0052.severity = none
 # S4487: Unread "private" fields should be removed
 dotnet_diagnostic.S4487.severity = none
 
+# S125: Sections of code should not be commented out
+dotnet_diagnostic.S125.severity = none
+
+# CS8604: Posible argumento de referencia nulo
+dotnet_diagnostic.CS8604.severity = none
+
+# S1481: Unused local variables should be removed
+dotnet_diagnostic.S1481.severity = none
+
+# IDE0057: Usar el operador de intervalo
+dotnet_diagnostic.IDE0057.severity = none
+
+# CS8600: Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
+dotnet_diagnostic.CS8600.severity = none
+
+# IDE0059: Asignación innecesaria de un valor
+dotnet_diagnostic.IDE0059.severity = none
+
 [*.{cs,vb}]
 dotnet_style_allow_multiple_blank_lines_experimental = true:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent

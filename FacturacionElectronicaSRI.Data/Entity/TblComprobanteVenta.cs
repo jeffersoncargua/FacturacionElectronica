@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FacturacionElectronicaSRI.Data.Entity
 {
+    [Index(nameof(IdEmpresa), Name = "IX_TblComprobanteVenta_IdEmpresa")]
+    [Index(nameof(IdCliente), Name = "IX_TblComprobanteVenta_IdCliente")]
     public class TblComprobanteVenta
     {
         [Key]
@@ -22,6 +25,8 @@ namespace FacturacionElectronicaSRI.Data.Entity
         public required DateTime FechaEmision { get; set; }
 
         public required string TipoComprobante { get; set; }
+
+        public required string NumeroComprobante { get; set; } // Es el numero de comprobante que asigna el sistema cuyo formato es : 001-001-000000123 por ejemplo, ademas se debe hacer para que los ultimos 8 numeros sea incremental y rellenados con cero
 
         public required string FormaPago { get; set; } // Es la forma de pago que efectuara el cliente, estos se encuentran en la tabla de formas de pago del SRI
 

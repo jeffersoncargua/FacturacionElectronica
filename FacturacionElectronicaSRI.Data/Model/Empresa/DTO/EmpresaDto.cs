@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace FacturacionElectronicaSRI.Data.Model.Empresa.DTO
 {
@@ -20,11 +21,13 @@ namespace FacturacionElectronicaSRI.Data.Model.Empresa.DTO
 
         public int Ambiente { get; set; }
 
-        public required string PathCertificado { get; set; }
+        // public string? PathCertificado { get; set; } = null;
+        public IFormFile? CertificadoEmpresa { get; set; }
 
         public required string Contraseña { get; set; }
 
-        public required string PathLogo { get; set; }
+        // public string? PathLogo { get; set; } = null;
+        public IFormFile? LogoEmpresa { get; set; }
 
         [DataType(DataType.EmailAddress)]
         public required string EmailEmpresa { get; set; }

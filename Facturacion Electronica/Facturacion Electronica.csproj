@@ -5,15 +5,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Facturacion_Electronica</RootNamespace>
+    <UserSecretsId>01f362e9-0cf2-46dd-9a55-ca2d9927d87f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="FirmaXadesNetCore" Version="1.1.0" />
-    <PackageReference Include="IKVM" Version="8.14.0" />
-    <PackageReference Include="IKVM.Image.JDK" Version="8.14.0" />
-    <PackageReference Include="IKVM.Image.JRE" Version="8.14.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.21">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,21 +29,19 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <IkvmReference Include="LibreriaSRI\MITyCLibAPI-1.1.7.jar" />
-    <IkvmReference Include="LibreriaSRI\MITyCLibOCSP-1.1.7.jar" />
-	<IkvmReference Include="LibreriaSRI\MITyCLibTrust-1.1.7.jar" />
-    <IkvmReference Include="LibreriaSRI\MITyCLibTSA-1.1.7.jar" />
-    <IkvmReference Include="LibreriaSRI\MITyCLibXADES-1.1.7.jar" />
-  </ItemGroup>
-	
-  <ItemGroup>
     <ProjectReference Include="..\FacturacionElectronica.Utility\FacturacionElectronica.Utility.csproj" />
     <ProjectReference Include="..\FacturacionElectronicaSRI.Data\FacturacionElectronicaSRI.Data.csproj" />
     <ProjectReference Include="..\FacturacionElectronicaSRI.Repository\FacturacionElectronicaSRI.Repository.csproj" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="Archivos\CertificadosP12\" />
+    <Folder Include="Archivos\LogoEmpresa\" />
+  </ItemGroup>
 
   <PropertyGroup>
  	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+ 	<UserSecretsId>01f362e9-0cf2-46dd-9a55-ca2d9927d87f</UserSecretsId>
   </PropertyGroup>
 
 </Project>

@@ -1,4 +1,7 @@
-﻿namespace FacturacionElectronicaSRI.Data.Model.DetalleVenta.DTO
+﻿using FacturacionElectronicaSRI.Data.Model.ComprobanteVenta.DTO;
+using FacturacionElectronicaSRI.Data.Model.Producto.DTO;
+
+namespace FacturacionElectronicaSRI.Data.Model.DetalleVenta.DTO
 {
     public class DetalleVentaDto
     {
@@ -6,7 +9,11 @@
 
         public int IdComprobanteVenta { get; set; }
 
+        public ComprobanteVentaDto? ComprobanteVenta { get; set; } = null;
+
         public int IdProducto { get; set; }
+
+        public ProductoDto? Producto { get; set; } = null!;
 
         public decimal Cantidad { get; set; } // Es la cantidad de productos o servicios vendidos
 

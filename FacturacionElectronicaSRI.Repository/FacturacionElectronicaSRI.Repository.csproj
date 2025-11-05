@@ -9,6 +9,10 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="FirmaXadesNetCore" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,7 +24,72 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Downloads\FirmaXadesNetCore-master\FirmaXadesNetCore-master\FirmaXadesNetCore\FirmaXadesNetCore.csproj" />
     <ProjectReference Include="..\FacturacionElectronicaSRI.Data\FacturacionElectronicaSRI.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="bcmail-jdk16-1.45">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\bcmail-jdk16-1.45.dll</HintPath>
+    </Reference>
+    <Reference Include="bcprov-jdk16-1.45">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\bcprov-jdk16-1.45.dll</HintPath>
+    </Reference>
+    <Reference Include="bctsp-jdk16-1.45">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\bctsp-jdk16-1.45.dll</HintPath>
+    </Reference>
+    <Reference Include="commons-codec-1.2">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\commons-codec-1.2.dll</HintPath>
+    </Reference>
+    <Reference Include="commons-httpclient-3.0.1">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\commons-httpclient-3.0.1.dll</HintPath>
+    </Reference>
+    <Reference Include="commons-lang-2.4">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\commons-lang-2.4.dll</HintPath>
+    </Reference>
+    <Reference Include="commons-logging-1.1.1">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\commons-logging-1.1.1.dll</HintPath>
+    </Reference>
+    <Reference Include="jss-4.2.5">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\jss-4.2.5.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibAPI-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibAPI-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibCert-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibCert-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibOCSP-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibOCSP-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibPolicy-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibPolicy-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibTrust-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibTrust-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibTSA-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibTSA-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="MITyCLibXADES-1.1.7">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\MITyCLibXADES-1.1.7.dll</HintPath>
+    </Reference>
+    <Reference Include="serializer-2.7.1">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\serializer-2.7.1.dll</HintPath>
+    </Reference>
+    <Reference Include="xalan-2.7.1">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\xalan-2.7.1.dll</HintPath>
+    </Reference>
+    <Reference Include="xml-apis-1.4.01">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\xml-apis-1.4.01.dll</HintPath>
+    </Reference>
+    <Reference Include="xmlsec-1.4.2-ADSI-1.1">
+      <HintPath>..\Facturacion Electronica\LibreriaSRI\xmlsec-1.4.2-ADSI-1.1.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Archivos\" />
   </ItemGroup>
 
   <PropertyGroup>

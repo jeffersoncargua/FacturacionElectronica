@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FacturacionElectronicaSRI.Data.Entity
 {
+    [Index(nameof(Ruc), Name = "IX_TblEmpresa_Ruc")]
+    [Index(nameof(NombreComercial), Name = "IX_TblEmpresa_NombreComercial")]
     public class TblEmpresa
     {
         [Key]
@@ -23,11 +26,11 @@ namespace FacturacionElectronicaSRI.Data.Entity
 
         public int Ambiente { get; set; }
 
-        public required string PathCertificado { get; set; }
+        public string? PathCertificado { get; set; }
 
         public required string Contraseña { get; set; }
 
-        public required string PathLogo { get; set; }
+        public string? PathLogo { get; set; }
 
         // [DataType(DataType.EmailAddress)]
         public required string EmailEmpresa { get; set; }

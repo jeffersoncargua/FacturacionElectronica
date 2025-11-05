@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FacturacionElectronicaSRI.Data.Entity
 {
+    [Index(nameof(IdComprobanteVenta), Name = "IX_TblDetalleVenta_IdComprobanteVenta")]
+    [Index(nameof(IdProducto), Name = "IX_TblDetalleVenta_IdProducto")]
     public class TblDetalleVenta
     {
         [Key]

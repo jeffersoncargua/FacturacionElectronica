@@ -4,8 +4,6 @@
     {
         public int Id { get; set; }
 
-        public int IdEmpresa { get; set; }
-
         public required string Nombres { get; set; }
 
         public required string Identificacion { get; set; }
