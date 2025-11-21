@@ -14,5 +14,7 @@
         public string ClaveAcceso { get; set; } = string.Empty;
 
         public int Code { get; set; }
+
+        public string? PathXMLAutorizado { get; set; } = null;
     }
 }

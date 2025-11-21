@@ -11,6 +11,8 @@ namespace FacturacionElectronicaSRI.Data.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public string? PathImagen { get; set; }
+
         public required string CodigoPrincipal { get; set; }
 
         public string? CodigoAuxiliar { get; set; }
@@ -22,5 +24,7 @@ namespace FacturacionElectronicaSRI.Data.Entity
         public int Cantidad { get; set; }
 
         public string? Estado { get; set; }
+
+        public decimal? Descuento { get; set; } = 0.00M;
     }
 }

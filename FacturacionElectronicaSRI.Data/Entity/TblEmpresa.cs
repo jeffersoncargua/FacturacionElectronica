@@ -24,7 +24,7 @@ namespace FacturacionElectronicaSRI.Data.Entity
 
         public required string Estado { get; set; }
 
-        public int Ambiente { get; set; }
+        public int Ambiente { get; set; } // 1 es para ambiente de pruebas y 2 es para ambiente de produccion
 
         public string? PathCertificado { get; set; }
 

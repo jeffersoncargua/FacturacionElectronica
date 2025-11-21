@@ -47,7 +47,7 @@ namespace Facturacion_Electronica.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> Create([FromBody] ProductoDto productoDto)
+        public async Task<ActionResult<ApiResponse>> Create([FromForm] ProductoDto productoDto)
         {
             var response = await _productoRepository.CreateProductoAsync(productoDto);
 
@@ -59,7 +59,7 @@ namespace Facturacion_Electronica.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> Update(int id, [FromBody] ProductoDto productoDto)
+        public async Task<ActionResult<ApiResponse>> Update(int id, [FromForm] ProductoDto productoDto)
         {
             var response = await _productoRepository.UpdateProductoAsync(id, productoDto);
 

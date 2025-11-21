@@ -1,8 +1,14 @@
-﻿namespace FacturacionElectronicaSRI.Data.Model.Producto.DTO
+﻿using Microsoft.AspNetCore.Http;
+
+namespace FacturacionElectronicaSRI.Data.Model.Producto.DTO
 {
     public class ProductoDto
     {
         public int Id { get; set; }
+
+        public string? PathImagen { get; set; }
+
+        public IFormFile? File { get; set; }
 
         public required string CodigoPrincipal { get; set; }
 
@@ -15,5 +21,7 @@
         public int Cantidad { get; set; }
 
         public string? Estado { get; set; }
+
+        public decimal? Descuento { get; set; } = 0.00M;
     }
 }

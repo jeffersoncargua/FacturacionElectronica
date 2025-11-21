@@ -59,7 +59,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
             {
                 string rutaLogo = string.Empty;
                 string rutaCertificado = string.Empty;
-                string rutaCarpeta = _webHostingEnvironment.ContentRootPath + "\\Archivos";
+                string rutaCarpeta = _webHostingEnvironment.ContentRootPath + @"\Archivos";
 
                 var empresaDb = await this.GetAsync(u => u.Ruc == empresaDto.Ruc || u.NombreComercial == empresaDto.NombreComercial, tracked: false);
                 if (empresaDb == null)
@@ -78,7 +78,6 @@ namespace FacturacionElectronicaSRI.Repository.Repository
 
                         using var fileStreamLogo = new FileStream(Path.Combine(carpetaLogoEmpresa, empresaDto.NombreComercial + extensionLogo), FileMode.Create);
                         empresaDto.LogoEmpresa.CopyTo(fileStreamLogo);
-
                         rutaLogo = rutaCarpeta + @"\LogoEmpresa\" + empresaDto.NombreComercial + extensionLogo;
                     }
 
@@ -145,7 +144,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var empresaDb = await this.GetAllAsync(u => u.Ruc.Contains(query ?? string.Empty) || u.NombreComercial.Contains(query ?? string.Empty), tracked: false);
+                var empresaDb = await this.GetAllAsync(u => u.Ruc.Contains(query ?? string.Empty) || u.NombreComercial.Contains(query ?? string.Empty));
                 if (empresaDb != null)
                 {
                     _response.IsSuccess = true;

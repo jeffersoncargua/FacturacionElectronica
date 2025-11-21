@@ -31,15 +31,22 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
         public void CargarDesdeP12(string rutaCertificado, string contrasena)
         {
-            _logger.LogTrace($"Cargando Certificado desde archivo p12 {rutaCertificado}");
+            _logger.LogTrace("Cargando Certificado desde archivo p12" + rutaCertificado);
 
             try
             {
-                using X509Store store = new("My", StoreLocation.CurrentUser);
+                if (File.Exists(rutaCertificado))
+                {
+                    Console.WriteLine("Si existe");
 
-                _x509Certificate2 = new X509Certificate2(File.ReadAllBytes(rutaCertificado), contrasena, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
+                    using X509Store store = new("My", StoreLocation.CurrentUser);
 
-                _logger.LogDebug("Certificado cargado");
+                    _x509Certificate2 = new X509Certificate2(File.ReadAllBytes(rutaCertificado), contrasena, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
+
+                    _logger.LogDebug("Certificado cargado");
+                }
+
+                throw new Exception("No existe el ceritificado P12");
             }
             catch (Exception ex)
             {
@@ -61,7 +68,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
         {
             if(_x509Certificate2 == null)
             {
-                throw new Exception("Debe primero cargar un certificado valido");
+                throw new Exception("Debe primero cargar un certificado válido");
             }
 
             var xadesService = new XadesService();

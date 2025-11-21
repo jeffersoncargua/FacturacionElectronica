@@ -30,16 +30,20 @@ namespace FacturacionElectronicaSRI.Data.Entity
 
         public required string FormaPago { get; set; } // Es la forma de pago que efectuara el cliente, estos se encuentran en la tabla de formas de pago del SRI
 
-        public required decimal Subtotal0 { get; set; }
+        public required decimal Subtotal0 { get; set; } // Por lo general su valor es cero 0
 
-        public required decimal Subtotal12 { get; set; }
+        public required decimal Subtotal15 { get; set; } // Es la suma de los valores de los productos + descuentos sin el iva o la base imponible considerando la suma de los productos + los descuentos
 
-        public required decimal Descuento { get; set; }
+        public required decimal Descuento { get; set; } // Es el total la suma de todos los descuentos
 
-        public required decimal Subtotal { get; set; }
+        public required decimal TotalIva { get; set; } // Es la suma de todos los ivas de cada producto, o tambien es el iva de la base imponible que actualmente es del 15%
 
-        public required decimal TotalIva { get; set; }
+        // public required decimal ICE { get; set; } // Es el impuesto de consumos especiales (ICE)
+        // public required decimal IVA15 { get; set; } // Es la suma de todos los ivas de cada producto
+        public required decimal Propina { get; set; }
 
-        public required string DocSri { get; set; }
+        public required decimal Total { get; set; } // Es el valor total de la venta que considera la base imponible + el totalIva15
+
+        public string? DocSri { get; set; } = null;
     }
 }

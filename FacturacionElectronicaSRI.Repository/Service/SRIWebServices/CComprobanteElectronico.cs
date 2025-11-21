@@ -14,12 +14,12 @@
             {
                 foreach (var comprobanteRecepcion in resRecepcion.Comprobantes)
                 {
-                    foreach (var Mensaje in comprobanteRecepcion.Mensajes)
+                    foreach (var mensajeComprobante in comprobanteRecepcion.Mensajes)
                     {
-                        mensaje = Mensaje.mensaje;
-                        mensaje = Mensaje.InformacionAdicional;
-                        mensaje = Mensaje.Identificador;
-                        mensaje = Mensaje.Tipo;
+                        mensaje = mensajeComprobante.mensaje;
+                        mensaje = mensajeComprobante.InformacionAdicional;
+                        mensaje = mensajeComprobante.Identificador;
+                        mensaje = mensajeComprobante.Tipo;
                     }
                 }
             }

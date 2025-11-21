@@ -34,11 +34,13 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                     return _response;
                 }
 
-                var comprobanteVentaDB = await this.GetAsync(u => u.IdCliente == comprobanteVentaDto.IdCliente, tracked: false);
-                if (comprobanteVentaDB != null)
+                var comprobanteDb = await this.GetAsync(u => u.NumeroComprobante == comprobanteVentaDto.NumeroComprobante, tracked: false);
+
+                if (comprobanteDb == null)
                 {
                     await this.CreateAsyn(_mapper.Map<TblComprobanteVenta>(comprobanteVentaDto));
 
+                    // await _db.TblComprobanteVenta.AddAsync(_mapper.Map<TblComprobanteVenta>(comprobanteVentaDto));
                     _response.IsSuccess = true;
                     _response.Message = "Registro Exitoso";
                     _response.StatusCode = HttpStatusCode.Created;
@@ -46,7 +48,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 }
 
                 _response.IsSuccess = false;
-                _response.Message = "El cliente no tiene registros";
+                _response.Message = "Ya existe un comprobante con un numero de comprobante similar. Intentelo nuevamente.";
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return _response;
             }
@@ -69,23 +71,23 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 {
                     var startDateParsed = JsonConvert.DeserializeObject<DateTime>(startDate!);
                     var endDateParsed = JsonConvert.DeserializeObject<DateTime>(endDate!);
-                    comprobanteVentasDb = await this.GetAllAsync(u => u.Cliente!.Identificacion.Contains(query ?? string.Empty) || (u.FechaEmision >= startDateParsed && u.FechaEmision <= endDateParsed), tracked: false, includeProperties: "TblEmpresa,TblCliente");
+                    comprobanteVentasDb = await this.GetAllAsync(u => u.Cliente!.Identificacion.Contains(query ?? string.Empty) || (u.FechaEmision >= startDateParsed && u.FechaEmision <= endDateParsed), includeProperties: "Empresa,Cliente");
                 }
                 else if (!(string.IsNullOrEmpty(startDate) && string.IsNullOrEmpty(endDate)))
                 {
                     var startDateParsed = JsonConvert.DeserializeObject<DateTime>(startDate!);
                     var endDateParsed = JsonConvert.DeserializeObject<DateTime>(endDate!);
-                    comprobanteVentasDb = await this.GetAllAsync(u => u.FechaEmision >= startDateParsed && u.FechaEmision <= endDateParsed, tracked: false, includeProperties: "TblEmpresa,TblCliente");
+                    comprobanteVentasDb = await this.GetAllAsync(u => u.FechaEmision >= startDateParsed && u.FechaEmision <= endDateParsed, includeProperties: "Empresa,Cliente");
                 }
                 else
                 {
-                    comprobanteVentasDb = await this.GetAllAsync(tracked: false, includeProperties: "TblEmpresa,TblCliente");
+                    comprobanteVentasDb = await this.GetAllAsync(includeProperties: "Empresa,Cliente");
                 }
 
                 if(comprobanteVentasDb != null)
                 {
                     _response.IsSuccess = true;
-                    _response.Message = "Se ha obtenido el registro solicitado";
+                    _response.Message = "Se han obtenido los registros solicitados";
                     _response.Result = _mapper.Map<List<ComprobanteVentaDto>>(comprobanteVentasDb);
                     _response.StatusCode = HttpStatusCode.OK;
                     return _response;
@@ -94,6 +96,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 _response.IsSuccess = false;
                 _response.Message = "No se encontró el registro solicitado";
                 _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = Array.Empty<ComprobanteVentaDto>();
                 return _response;
             }
             catch (Exception ex)
@@ -109,7 +112,9 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var comprobanteVentaDb = await this.GetAsync(u => u.Id == id || u.Cliente!.Identificacion == query, tracked: false, includeProperties: "TblEmpresa,TblCliente");
+                TblComprobanteVenta comprobanteVentaDb = query != null ? await this.GetAsync(u => u.Cliente!.Identificacion == query, tracked: false, includeProperties: "Empresa,Cliente")
+                    : await this.GetAsync(u => u.Id == id, tracked: false, includeProperties: "Empresa,Cliente");
+
                 if (comprobanteVentaDb != null)
                 {
                     _response.IsSuccess = true;
@@ -122,6 +127,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 _response.IsSuccess = false;
                 _response.Message = "No se encontró el registro solicitado";
                 _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = null;
                 return _response;
             }
             catch (Exception ex)
@@ -137,11 +143,11 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var comprobanteVentaDb = await this.GetAsync(u => u.Id == id, tracked: false);
+                var comprobanteVentaDb = await GetComprobanteVentaAsync(id);
 
-                if (comprobanteVentaDb != null)
+                if (comprobanteVentaDb.Result != null)
                 {
-                    await this.DeleteAsync(comprobanteVentaDb);
+                    await this.DeleteAsync(_mapper.Map<TblComprobanteVenta>(comprobanteVentaDb.Result));
 
                     _response.IsSuccess = true;
                     _response.Message = "Se eliminó el registro correctamente.";
@@ -169,27 +175,11 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var comprobanteVentaDb = await this.GetAsync(u => u.Id == id, tracked: false);
+                var comprobanteVentaExist = await GetAsync(u => u.Id == id, tracked: false);
 
-                if (comprobanteVentaDb != null)
+                if (comprobanteVentaExist != null)
                 {
-                    TblComprobanteVenta comprobanteVentaUpdated = new()
-                    {
-                        Id = comprobanteVentaDb.Id,
-                        IdEmpresa = comprobanteVentaDb.IdEmpresa,
-                        IdCliente = comprobanteVentaDb.IdCliente,
-                        FechaEmision = comprobanteVentaDb.FechaEmision,
-                        TipoComprobante = comprobanteVentaDto.TipoComprobante,
-                        NumeroComprobante = comprobanteVentaDto.NumeroComprobante,
-                        FormaPago = comprobanteVentaDto.FormaPago,
-                        Subtotal = comprobanteVentaDto.Subtotal,
-                        Subtotal0 = comprobanteVentaDto.Subtotal0,
-                        Subtotal12 = comprobanteVentaDto.Subtotal12,
-                        Descuento = comprobanteVentaDto.Descuento,
-                        TotalIva = comprobanteVentaDto.TotalIva,
-                        DocSri = comprobanteVentaDb.DocSri,
-                    };
-                    _db.TblComprobanteVenta.Update(comprobanteVentaUpdated);
+                    _db.TblComprobanteVenta.Update(_mapper.Map<TblComprobanteVenta>(comprobanteVentaDto));
                     await _db.SaveChangesAsync();
 
                     _response.IsSuccess = true;
@@ -199,16 +189,32 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                     return _response;
                 }
 
-                _response.IsSuccess = false;
-                _response.Message = "Se actualizó el registro correctamente.";
-                _response.StatusCode = HttpStatusCode.NotFound;
+                /*//TblComprobanteVenta comprobanteVentaUpdated = new()
+                //{
+                //    Id = comprobanteVentaDto.Id,
+                //    IdEmpresa = comprobanteVentaDto.IdEmpresa,
+                //    IdCliente = comprobanteVentaDto.IdCliente,
+                //    FechaEmision = comprobanteVentaDto.FechaEmision,
+                //    TipoComprobante = comprobanteVentaDto.TipoComprobante,
+                //    NumeroComprobante = comprobanteVentaDto.NumeroComprobante,
+                //    FormaPago = comprobanteVentaDto.FormaPago,
+                //    Subtotal = comprobanteVentaDto.Subtotal,
+                //    Subtotal0 = comprobanteVentaDto.Subtotal0,
+                //    Subtotal12 = comprobanteVentaDto.Subtotal12,
+                //    Descuento = comprobanteVentaDto.Descuento,
+                //    TotalIva = comprobanteVentaDto.TotalIva,
+                //    DocSri = comprobanteVentaDto.DocSri,
+                //};*/
 
+                _response.IsSuccess = false;
+                _response.Message = $"No se pudo actualizar el registro";
+                _response.StatusCode = HttpStatusCode.InternalServerError;
                 return _response;
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.Message = $"Se produjo un error en el servidor: {ex}";
+                _response.Message = $"No se pudo actualizar el registro. Se produjo un error en el servidor: {ex}";
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 return _response;
             }

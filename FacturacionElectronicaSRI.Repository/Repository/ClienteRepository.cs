@@ -25,8 +25,8 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var empresaDb = await this.GetAsync(u => u.Identificacion == clienteDto.Identificacion, tracked: false);
-                if (empresaDb == null)
+                var clienteDb = await this.GetAsync(u => u.Identificacion == clienteDto.Identificacion, tracked: false);
+                if (clienteDb == null)
                 {
                     await this.CreateAsyn(_mapper.Map<TblCliente>(clienteDto));
 
@@ -37,7 +37,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 }
 
                 _response.IsSuccess = false;
-                _response.Message = "Ya existe un registro con el ruc o nombre comercial";
+                _response.Message = "Ya existe un registro con el numero de identificacion";
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return _response;
             }
@@ -54,7 +54,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var clienteDb = await this.GetAllAsync(u => u.Email.Contains(query ?? string.Empty) || u.Nombres.Contains(query ?? string.Empty), tracked: false, includeProperties: "TblEmpresa");
+                var clienteDb = await this.GetAllAsync(u => u.Email.Contains(query ?? string.Empty) || u.Nombres.Contains(query ?? string.Empty));
                 if (clienteDb != null)
                 {
                     _response.IsSuccess = true;
@@ -82,7 +82,10 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var clienteDb = await this.GetAsync(u => u.Id == id || u.Identificacion == query || u.Email == query, tracked: false, includeProperties: "TblEmpresa");
+                TblCliente clienteDb = query != null ?
+                    await this.GetAsync(u => u.Identificacion == query || u.Email == query, tracked: false)
+                    : await this.GetAsync(u => u.Id == id, tracked: false);
+
                 if (clienteDb != null)
                 {
                     _response.IsSuccess = true;

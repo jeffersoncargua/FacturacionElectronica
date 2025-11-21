@@ -6,35 +6,35 @@ namespace FacturacionElectronicaSRI.Repository.Service.SRIWebServices
     public class CRespuestaRecepcion
     {
         [XmlElement("estado")]
-        public string Estado { get; set; }
+        public string? Estado { get; set; }
 
         [XmlArray(ElementName = "comprobantes")]
         [XmlArrayItem(typeof(Comprobante), ElementName = "comprobante")]
-        public List<Comprobante> Comprobantes { get; set; }
+        public List<Comprobante>? Comprobantes { get; set; }
     }
 
     public class Comprobante
     {
         [XmlElement("claveAcceso")]
-        public string ClaveAcceso { get; set; }
+        public string? ClaveAcceso { get; set; }
 
         [XmlArray(ElementName = "mensajes")]
         [XmlArrayItem(typeof(Mensaje), ElementName = "mensaje")]
-        public List<Mensaje> Mensajes { get; set; }
+        public List<Mensaje>? Mensajes { get; set; }
     }
 
     public class Mensaje
     {
         [XmlElement("identificador")]
-        public string Identificador { get; set; }
+        public string? Identificador { get; set; }
 
         [XmlElement("mensaje")]
-        public string mensaje { get; set; }
+        public string? mensaje { get; set; }
 
         [XmlElement("informacionAdicional")]
-        public string InformacionAdicional { get; set; }
+        public string? InformacionAdicional { get; set; }
 
         [XmlElement("tipo")]
-        public string Tipo { get; set; }
+        public string? Tipo { get; set; }
     }
 }

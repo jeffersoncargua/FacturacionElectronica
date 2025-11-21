@@ -38,7 +38,7 @@ namespace FacturacionElectronicaSRI.Data.Migrations
                     RutaAutorizados = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaveAcceso = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EstadoRecepcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PathXMLPDF = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PathXMLPDF = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {

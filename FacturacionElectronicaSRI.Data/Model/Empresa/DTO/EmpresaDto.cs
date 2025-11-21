@@ -21,13 +21,14 @@ namespace FacturacionElectronicaSRI.Data.Model.Empresa.DTO
 
         public int Ambiente { get; set; }
 
-        // public string? PathCertificado { get; set; } = null;
         public IFormFile? CertificadoEmpresa { get; set; }
 
         public required string Contraseña { get; set; }
+        public string? PathCertificado { get; set; } = null;
 
-        // public string? PathLogo { get; set; } = null;
         public IFormFile? LogoEmpresa { get; set; }
+
+        public string? PathLogo { get; set; } = null;
 
         [DataType(DataType.EmailAddress)]
         public required string EmailEmpresa { get; set; }

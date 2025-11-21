@@ -36,6 +36,7 @@
 	
   <ItemGroup>
     <Folder Include="Archivos\CertificadosP12\" />
+    <Folder Include="Archivos\FacturaElectronicaProcesados\" />
     <Folder Include="Archivos\LogoEmpresa\" />
   </ItemGroup>
 

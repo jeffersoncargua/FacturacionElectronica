@@ -25,11 +25,12 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var empresaDb = await this.GetAsync(u => u.ClaveAcceso == rutasFacturacionDto.ClaveAcceso, tracked: false);
-                if (empresaDb != null)
+                var rutaXMLDb = await this.GetAsync(u => u.ClaveAcceso == rutasFacturacionDto.ClaveAcceso, tracked: false);
+                if (rutaXMLDb == null)
                 {
                     await this.CreateAsyn(_mapper.Map<TblRutasXML>(rutasFacturacionDto));
 
+                    // await _db.TblRutasXML.AddAsync(_mapper.Map<TblRutasXML>(rutasFacturacionDto));
                     _response.IsSuccess = true;
                     _response.Message = "Registro Exitoso";
                     _response.StatusCode = HttpStatusCode.Created;
@@ -37,7 +38,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 }
 
                 _response.IsSuccess = false;
-                _response.Message = "Ya existe un registro con el codigo de acceso de la facturación.";
+                _response.Message = "Ya existe un registro con un codigo de acceso similar de facturación.";
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return _response;
             }
@@ -54,11 +55,11 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var rutasXmlDb = await this.GetAllAsync(u => u.IdEmpresa == Convert.ToInt32(query) || u.EstadoRecepcion == query, tracked: false);
+                var rutasXmlDb = await this.GetAllAsync(u => u.IdEmpresa == Convert.ToInt32(query) || u.EstadoRecepcion == query, includeProperties: "Empresa");
                 if (rutasXmlDb != null)
                 {
                     _response.IsSuccess = true;
-                    _response.Message = "Se ha obtenido el registro solicitado";
+                    _response.Message = "Se han obtenido los registros solicitados";
                     _response.Result = _mapper.Map<List<TblRutasXML>>(rutasXmlDb);
                     _response.StatusCode = HttpStatusCode.OK;
                     return _response;
@@ -82,7 +83,10 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var rutaXmlDb = await this.GetAsync(u => u.Id == id || u.ClaveAcceso == query, tracked: false);
+                TblRutasXML rutaXmlDb = query != null
+                    ? await this.GetAsync(u => u.ClaveAcceso == query, tracked: false, includeProperties: "Empresa")
+                    : await this.GetAsync(u => u.Id == id, tracked: false, includeProperties: "Empresa");
+
                 if (rutaXmlDb != null)
                 {
                     _response.IsSuccess = true;

@@ -13,10 +13,10 @@ namespace FacturacionElectronicaSRI.Data.FormatosXML.FacturacionSRIXML
         public IFormFile? EmpresaUbicacionArchivop12 { get; set; }
 
         [Required(ErrorMessage = "Campo requerido {0}")]
-        public string EmpresaContrasena { get; set; }
+        public string? EmpresaContrasena { get; set; }
 
         [Required(ErrorMessage = "Campo requerido {0}")]
-        public IFormFile XmlDocumento { get; set; }
+        public IFormFile? XmlDocumento { get; set; }
 
         [Required]
         [StringLength(maximumLength: 49, MinimumLength = 49)]
@@ -27,17 +27,17 @@ namespace FacturacionElectronicaSRI.Data.FormatosXML.FacturacionSRIXML
     public class ViewFirmaXmlDto
     {
         [Required(ErrorMessage = "Campo requerido {0}")]
-        public string XmlDocumentoFirmadoString { get; set; }
+        public string? XmlDocumentoFirmadoString { get; set; }
 
         [Required(ErrorMessage = "Campo requerido {0}")]
-        public string XmlDocumentoFirmado { get; set; }
+        public string? XmlDocumentoFirmado { get; set; }
 
         [Required]
         [StringLength(maximumLength: 49, MinimumLength = 49)]
         [RegularExpression("^[0-9]+$", ErrorMessage = "Solo se permiten números")]
         public string ClaveAcceso { get; set; } = string.Empty;
 
-        public string EmpresaCarpeta { get; set; }
+        public string? EmpresaCarpeta { get; set; }
     }
 
     public class ViewXmlDto
@@ -54,5 +54,6 @@ namespace FacturacionElectronicaSRI.Data.FormatosXML.FacturacionSRIXML
 
         public string? Mensaje { get; set; }
 
+        public bool IsSuccess { get; set; } = false;
     }
 }

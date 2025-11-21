@@ -29,14 +29,9 @@ namespace FacturacionElectronicaSRI.Repository.Repository
             await SaveAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true, string? includeProperties = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
             IQueryable<T> queryable = dbSet;
-            if (!tracked)
-            {
-                queryable = queryable.AsNoTracking();
-            }
-
             if (filter != null)
             {
                 queryable = queryable.Where(filter);

@@ -38,12 +38,9 @@ namespace FacturacionElectronicaSRI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("IdEmpresa")
-                        .HasColumnType("int");
-
                     b.Property<string>("Identificacion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Nombres")
                         .IsRequired()
@@ -57,7 +54,7 @@ namespace FacturacionElectronicaSRI.Data.Migrations
 
                     b.HasIndex(new[] { "Email" }, "IX_TblCliente_Email");
 
-                    b.HasIndex(new[] { "IdEmpresa" }, "IX_TblCliente_IdEmpresa");
+                    b.HasIndex(new[] { "Identificacion" }, "IX_TblCliente_Identificacion");
 
                     b.ToTable("TblCliente");
                 });
@@ -74,7 +71,6 @@ namespace FacturacionElectronicaSRI.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DocSri")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("FechaEmision")
@@ -94,18 +90,21 @@ namespace FacturacionElectronicaSRI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Subtotal")
+                    b.Property<decimal>("Propina")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Subtotal0")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Subtotal12")
+                    b.Property<decimal>("Subtotal15")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TipoComprobante")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalIva")
                         .HasColumnType("decimal(18,2)");
@@ -257,7 +256,13 @@ namespace FacturacionElectronicaSRI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("Descuento")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Estado")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PathImagen")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PrecioUnitario")

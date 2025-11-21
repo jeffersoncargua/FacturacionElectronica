@@ -30,8 +30,8 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             string ruta = Path.Combine(contenedor, claveAcceso + extension);
 
-            var rutaExist = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso);
-            if ((rutaExist.RutaGenerados != null && rutaExist.RutaGenerados == ruta) || (rutaExist.RutaFirmados != null && rutaExist.RutaFirmados == ruta) || (rutaExist.RutaAutorizados != null && rutaExist.RutaAutorizados == ruta))
+            var rutaExist = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso, tracked: false);
+            if (rutaExist != null)
             {
                 var oldFilepath = ruta;
                 File.Delete(oldFilepath);

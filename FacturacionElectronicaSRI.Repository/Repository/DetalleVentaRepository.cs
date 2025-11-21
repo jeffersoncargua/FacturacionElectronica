@@ -29,6 +29,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 {
                     await this.CreateAsyn(_mapper.Map<TblDetalleVenta>(detalleVentaDto));
 
+                    // await _db.TblDetalleVenta.AddAsync(_mapper.Map<TblDetalleVenta>(detalleVentaDto));
                     _response.IsSuccess = true;
                     _response.Message = "Registro Exitoso";
                     _response.StatusCode = HttpStatusCode.Created;
@@ -53,11 +54,11 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var detalleVentasDb = await this.GetAllAsync(u => u.IdComprobanteVenta == idComprobante, tracked: false, includeProperties: "TblComprobanteVenta,TblProducto");
+                var detalleVentasDb = await this.GetAllAsync(u => u.IdComprobanteVenta == idComprobante, includeProperties: "ComprobanteVenta,Producto");
                 if (detalleVentasDb != null)
                 {
                     _response.IsSuccess = true;
-                    _response.Message = "Se ha obtenido el registro solicitado";
+                    _response.Message = "Se han obtenido los registros solicitados";
                     _response.Result = _mapper.Map<List<DetalleVentaDto>>(detalleVentasDb);
                     _response.StatusCode = HttpStatusCode.OK;
                     return _response;
@@ -81,7 +82,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                var detalleVentaDb = await this.GetAsync(u => u.Id == id, tracked: false, includeProperties: "TblComprobanteVenta,TblProducto");
+                TblDetalleVenta detalleVentaDb = await this.GetAsync(u => u.Id == id, tracked: false, includeProperties: "ComprobanteVenta,Producto");
                 if (detalleVentaDb != null)
                 {
                     _response.IsSuccess = true;
@@ -157,6 +158,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                         VentaIva = detalleVentaDto.VentaIva,
                         Total = detalleVentaDto.Total,
                     };
+
                     _db.TblDetalleVenta.Update(detalleVentaUpdated);
                     await _db.SaveChangesAsync();
 
