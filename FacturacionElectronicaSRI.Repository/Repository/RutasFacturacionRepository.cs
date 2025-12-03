@@ -162,7 +162,12 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                         PathXMLPDF = rutasFacturacionDto.PathXMLPDF,
                     };
 
-                    _db.TblRutasXML.Update(rutaXmlUpdated);
+                    // _db.TblRutasXML.Update(rutaXmlUpdated);
+                    // await _db.SaveChangesAsync();
+                    // _db.TblRutasXML.Entry(rutaXmlUpdated).CurrentValues.SetValues(rutaXmlDb);
+                    var entry = _db.TblRutasXML.Entry(rutaXmlUpdated);
+                    entry.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
                     await _db.SaveChangesAsync();
 
                     _response.IsSuccess = true;

@@ -14,7 +14,8 @@ namespace FacturacionElectronicaSRI.Repository.Service.IService
 
         Task<Response> GetAllDetalleVenta(int comprobanteId = 0);
 
-        Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto);
+        // Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto);
+        Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto, string pathXml);
 
         Task<Response> GetAllComprobanteVenta(string? query = null, string? startDate = null, string? endDate = null);
 

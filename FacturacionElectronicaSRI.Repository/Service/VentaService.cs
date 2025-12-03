@@ -169,19 +169,19 @@ namespace FacturacionElectronicaSRI.Repository.Service
             }
         }
 
-        public async Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto)
+        public async Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto, string pathXml)
         {
-            var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == comprobanteDto.DocSri, tracked: false);
-            if (rutaXmlDb == null)
-            {
-                _response.IsSuccess = false;
-                _response.Message = "La ruta del comprobante no esta registrado. No se pudo generar el documento PDF";
-                _response.StatusCode = HttpStatusCode.NotFound;
+            /*//var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == comprobanteDto.DocSri, tracked: false);
+            //if (rutaXmlDb == null)
+            //{
+            //    _response.IsSuccess = false;
+            //    _response.Message = "La ruta del comprobante no esta registrado. No se pudo generar el documento PDF";
+            //    _response.StatusCode = HttpStatusCode.NotFound;
 
-                return _response;
-            }
+            //    return _response;
+            //}
 
-            var rutasXmlDto = _mapper.Map<RutasFacturacionDto>(rutaXmlDb);
+            //var rutasXmlDto = _mapper.Map<RutasFacturacionDto>(rutaXmlDb);*/
 
             var detallesDb = await _detalleVentaRepository.GetAllAsync(u => u.IdComprobanteVenta == comprobanteDto.Id, includeProperties: "ComprobanteVenta,Producto");
             if (detallesDb.Count == 0)
@@ -748,19 +748,32 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
             var rutaDocumentoPdf = ruta + @$"\Factura-{comprobanteDto.DocSri}.pdf";
 
-            RutasFacturacionDto rutaXmlWithPDF = new()
+            /*//RutasFacturacionDto rutaXmlWithPDF = new()
+            //{
+            //    Id = rutasXmlDto.Id,
+            //    IdEmpresa = rutasXmlDto.IdEmpresa,
+            //    ClaveAcceso = rutasXmlDto.ClaveAcceso,
+            //    EstadoRecepcion = rutasXmlDto.EstadoRecepcion,
+            //    RutaGenerados = pathXml,
+            //    RutaFirmados = rutasXmlDto.RutaFirmados,
+            //    RutaAutorizados = rutasXmlDto.RutaAutorizados,
+            //    PathXMLPDF = rutaDocumentoPdf,
+            //};
+
+            // await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutasXmlDto.Id, rutaXmlWithPDF);*/
+
+            RutasFacturacionDto rutaXmlWithPath = new()
             {
-                Id = rutasXmlDto.Id,
-                IdEmpresa = rutasXmlDto.IdEmpresa,
-                ClaveAcceso = rutasXmlDto.ClaveAcceso,
-                EstadoRecepcion = rutasXmlDto.EstadoRecepcion,
-                RutaGenerados = rutasXmlDto.RutaGenerados,
-                RutaFirmados = rutasXmlDto.RutaFirmados,
-                RutaAutorizados = rutasXmlDto.RutaAutorizados,
+                IdEmpresa = comprobanteDto.IdEmpresa,
+                ClaveAcceso = comprobanteDto.DocSri,
+                EstadoRecepcion = "Pruebas Envio de factura al correo",
+                RutaGenerados = pathXml,
+                RutaFirmados = null,
+                RutaAutorizados = null,
                 PathXMLPDF = rutaDocumentoPdf,
             };
 
-            await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutasXmlDto.Id, rutaXmlWithPDF);
+            await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaXmlWithPath);
 
             _response.IsSuccess = true;
             _response.Message = "Se genero el documento PDF de la factura";
@@ -1232,23 +1245,24 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     return _response;
                 }
 
-                RutasFacturacionDto rutaXmlDto = new()
-                {
-                    RutaFirmados = null,
-                    RutaAutorizados = null,
-                    RutaGenerados = isXmlGenerated.PathXML,
-                    ClaveAcceso = comprobanteConDocSri!.DocSri,
-                    IdEmpresa = comprobanteConDocSri.IdEmpresa,
-                    PathXMLPDF = null,
-                    EstadoRecepcion = null,
-                };
+                /*//RutasFacturacionDto rutaXmlDto = new()
+                //{
+                //    RutaFirmados = null,
+                //    RutaAutorizados = null,
+                //    RutaGenerados = isXmlGenerated.PathXML,
+                //    ClaveAcceso = comprobanteConDocSri!.DocSri,
+                //    IdEmpresa = comprobanteConDocSri.IdEmpresa,
+                //    PathXMLPDF = null,
+                //    EstadoRecepcion = null,
+                //};
 
-                await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaXmlDto);
+                //await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaXmlDto);*/
 
                 // Se coloco de manera provisional este paso para observar como se genera la factura en pdf pero esto se realiza en el paso 7
-                var generarFacturaPdf = await GenerarRideYPdf(comprobanteTransaccion);
+                // var generarFacturaPdf = await GenerarRideYPdf(comprobanteTransaccion); // Aqui se debe ver que funcione cuando ya se tenga la firma del documento xml porque solo es para probar esta seccion
+                var generarFacturaPdf = await GenerarRideYPdf(comprobanteTransaccion, isXmlGenerated.PathXML);
 
-                // Se coloco de manero provisional este paso para observar el envio de la factura y el archivo xml por correo. Este paso seria el 8 
+                // Se coloco de manero provisional este paso para observar el envio de la factura y el archivo xml por correo. Este paso seria el 8.
                 var emailResponse = await EnviarFactura(comprobanteTransaccion.Id);
 
                 if (!emailResponse.IsSuccess)
