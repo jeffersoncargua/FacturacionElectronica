@@ -51,5 +51,4 @@ namespace FacturacionElectronicaSRI.Repository
         public int tasaAeroportuaria { get; set; }
         public int agenciaDeViaje { get; set; }
     }
-
 }

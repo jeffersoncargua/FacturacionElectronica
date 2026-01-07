@@ -29,7 +29,6 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 {
                     await this.CreateAsyn(_mapper.Map<TblDetalleVenta>(detalleVentaDto));
 
-                    // await _db.TblDetalleVenta.AddAsync(_mapper.Map<TblDetalleVenta>(detalleVentaDto));
                     _response.IsSuccess = true;
                     _response.Message = "Registro Exitoso";
                     _response.StatusCode = HttpStatusCode.Created;

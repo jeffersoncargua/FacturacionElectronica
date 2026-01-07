@@ -17,5 +17,4 @@
         public string expiryYear { get; set; }
         public string cvv { get; set; }
     }
-
 }

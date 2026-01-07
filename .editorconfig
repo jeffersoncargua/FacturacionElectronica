@@ -330,6 +330,60 @@ dotnet_diagnostic.CS8600.severity = none
 # IDE0059: Asignación innecesaria de un valor
 dotnet_diagnostic.IDE0059.severity = none
 
+# S112: General or reserved exceptions should never be thrown
+dotnet_diagnostic.S112.severity = none
+
+# SA1515: Single-line comment should be preceded by blank line
+dotnet_diagnostic.SA1515.severity = none
+
+# SA1010: Opening square brackets should be spaced correctly
+dotnet_diagnostic.SA1010.severity = none
+
+# SA1204: Static elements should appear before instance elements
+dotnet_diagnostic.SA1204.severity = none
+
+# S1075: URIs should not be hardcoded
+dotnet_diagnostic.S1075.severity = none
+
+# S2325: Methods and properties that don't access instance data should be static
+dotnet_diagnostic.S2325.severity = none
+
+# S1854: Unused assignments should be removed
+dotnet_diagnostic.S1854.severity = none
+
+# IDE0051: Quitar miembros privados no utilizados
+dotnet_diagnostic.IDE0051.severity = none
+
+# S1144: Unused private types or members should be removed
+dotnet_diagnostic.S1144.severity = none
+
+# IDE1006: Estilos de nombres
+dotnet_diagnostic.IDE1006.severity = none
+
+# SA1300: Element should begin with upper-case letter
+dotnet_diagnostic.SA1300.severity = none
+
+# SA1649: File name should match first type name
+dotnet_diagnostic.SA1649.severity = none
+
+# SA1402: File may only contain a single type
+dotnet_diagnostic.SA1402.severity = none
+
+# CS8618: Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de agregar el modificador "required" o declararlo como un valor que acepta valores NULL.
+dotnet_diagnostic.CS8618.severity = none
+
+# SA1122: Use string.Empty for empty strings
+dotnet_diagnostic.SA1122.severity = none
+
+# ASP0000: Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+dotnet_diagnostic.ASP0000.severity = none
+
+# CS8634: El tipo no se puede usar como parámetro de tipo en el tipo o método genérico. La nulabilidad del argumento de tipo no coincide con la restricción "class"
+dotnet_diagnostic.CS8634.severity = none
+
+# S6960: Controllers should not have mixed responsibilities
+dotnet_diagnostic.S6960.severity = none
+
 [*.{cs,vb}]
 dotnet_style_allow_multiple_blank_lines_experimental = true:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
@@ -343,3 +397,9 @@ dotnet_diagnostic.IDE0028.severity = none
 
 # IDE0300: Simplificar la inicialización de la recopilación
 dotnet_diagnostic.IDE0300.severity = none
+
+# IDE0045: Convertir a expresión condicional
+dotnet_diagnostic.IDE0045.severity = none
+
+# IDE0046: Convertir a expresión condicional
+dotnet_diagnostic.IDE0046.severity = none

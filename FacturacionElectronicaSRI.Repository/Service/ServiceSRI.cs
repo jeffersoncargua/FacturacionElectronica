@@ -145,7 +145,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
         /// <returns>Retorna las rutas de xml procesado y firmado.</returns>
         public ViewXmlDto FirmarXML(EmpresaDto empresaDto, string claveAcceso, string pathXmlGenerated)
         {
-            // string carpetaXmlFirmados = Path.Combine(_webHostEnvironment.ContentRootPath, "FacturacionElectronicaEmpresa-" + rucEmpresa, "DocumentosFirmados"); // ruta para los xml firmados
+            // Se genera la ruta para almacenar los xml firmados
             string carpetaXmlFirmados = Path.Combine(_webHostEnvironment.ContentRootPath, @"Archivos", "FacturacionElectronicaEmpresa-" + empresaDto.Ruc, "DocumentosFirmados"); // ruta para los xml firmados
             if (!Directory.Exists(carpetaXmlFirmados))
             {
@@ -154,41 +154,15 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
             try
             {
-                // var empresaDb = await _empresaRepository.GetAsync(u => u.Ruc == rucEmpresa, tracked: false);
-                // if (empresaDb == null)
-                // {
-                //     return new ViewXmlDto() { Id = 0, RucEmpresa = string.Empty, RutaXmlGenerado = string.Empty, RutaXmlFirmado = string.Empty, Mensaje = $"No exite la empresa" };
-                // }
-
-                // var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso);
                 if (empresaDto != null)
                 {
                     _certificadoService.CargarDesdeP12(empresaDto.PathCertificado, empresaDto.Contraseña); // Se carga el x509Certificate con el certificado p12 para la firma del documento xml
 
-                    // var xml = _certificadoService.FirmarDocumentoXml(rutaXmlDb.RutaGenerados!); // se firma el documento y nos lo devuelve
                     var xml = _certificadoService.FirmarDocumentoXml(pathXmlGenerated); // se firma el documento y nos lo devuelve
 
-                    // string rutaXmlFirmado = _webHostEnvironment.WebRootPath + @"/FacturacionElectronicaEmpresa-" + empresaDb.Ruc + @"/DocumentosFirmados/" + claveAcceso + ".xml";
                     string rutaXmlFirmado = _webHostEnvironment.ContentRootPath + @"\Archivos" + @"\FacturacionElectronicaEmpresa-" + empresaDto.Ruc + @"\DocumentosFirmados\" + claveAcceso + ".xml";
                     xml.Save(rutaXmlFirmado); // se almacena el xml firmado en el path de la rutaXmlFirmado
 
-                    /*RutasFacturacionDto rutaConFirma = new()
-                    {
-                        Id = rutaXmlDb.Id,
-                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                        RutaFirmados = rutaXmlFirmado,
-                        RutaAutorizados = null,
-                        EstadoRecepcion = null,
-                        PathXMLPDF = null,
-                    };
-
-                    // Se actualiza la ruta con el xml firmado
-                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaConFirma);*/
-
-                    // return new ViewXmlDto() { Id = rutaXmlDb.Id, RucEmpresa = empresaDb.Ruc, RutaXmlGenerado = rutaXmlDb.RutaGenerados, RutaXmlFirmado = rutaXmlFirmado, Mensaje = "Se firmo correctamente", IsSuccess = true };
-                    // return new ViewXmlDto() { Id = rutasFacturacionDto.Id, RucEmpresa = rutasFacturacionDto.Empresa.Ruc, RutaXmlGenerado = rutasFacturacionDto.RutaGenerados, RutaXmlFirmado = rutaXmlFirmado, Mensaje = "Se firmo correctamente", IsSuccess = true };
                     return new ViewXmlDto() { Id = 0, RucEmpresa = empresaDto.Ruc, RutaXmlGenerado = pathXmlGenerated, RutaXmlFirmado = rutaXmlFirmado, Mensaje = "Se firmo correctamente", IsSuccess = true };
                 }
 

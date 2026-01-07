@@ -47,13 +47,9 @@ namespace FacturacionElectronicaSRI.Repository.Service
         {
             var emailMessage = new MimeMessage();
 
-            // string file1 = "C:\\Users\\Juan Medina\\source\\repos\\Facturacion Electronica API\\Facturacion Electronica\\Archivos\\FacturasPDF\\Factura-1111202501170799690400110010010000000010451508211.pdf";
-            // string file2 = "C:\\Users\\Juan Medina\\source\\repos\\Facturacion Electronica API\\Facturacion Electronica\\Archivos\\FacturasPDF\\Factura-1111202501170799690400110010010000000010667190711.pdf";
             emailMessage.From.Add(new MailboxAddress("Factura Electronica", _emailConfig.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
-
-            // emailMessage.Body = new TextPart(TextFormat.Text) { Text = message.Content };
 
             // Se realiza la configuracion para enviar archivos en el mensaje de correo
             // En este segmento se configura el primer archivo que seria la factura en pdf

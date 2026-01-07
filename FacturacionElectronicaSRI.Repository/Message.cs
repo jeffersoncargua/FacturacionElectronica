@@ -30,5 +30,5 @@ namespace FacturacionElectronicaSRI.Repository
         public string Content { get; set; }
 
         public List<string>? Attachments { get; set; }
-        }
+    }
 }

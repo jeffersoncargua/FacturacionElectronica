@@ -834,9 +834,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 // Proceso para generar la clave de acceso(DocSri)
                 Random generator = new();
                 string numeroGenerado = generator.Next(0, 10000000).ToString("D8"); // permite generar un numero aleatorio de 8 digitos enteros
-                string numeroComprobante = "001-" + "001-" + comprobanteNumero9; // es el formato del numero de comprobante que acepta el SRI considerando
-                                                                                 // el punto de emision y el establecimiento que para este caso es 001 en ambos casos
-                                                                                 // debido a que solo existe una sola tienda
+                string numeroComprobante = "001-" + "001-" + comprobanteNumero9; // es el formato del numero de comprobante que acepta el SRI considerando el punto de emision
+                                                                                 // y el establecimiento que para este caso es 001 en ambos casos debido a que solo existe una sola tienda
                 var secuencial = numeroComprobante.Split("-");
                 var fechaEmision = DateTime.Now;
 
@@ -888,7 +887,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 // 2. Se generan los detalles de la venta
                 var comprobanteTransaccion = (ComprobanteVentaDto)comprobanteGeneradoResponse.Result;
-                var responseGenerarDetalle = await GenerarDetalleVenta(comprobanteTransaccion.Id, productsInCart);
+                var responseGenerarDetalle = await GenerarDetalleVenta(comprobanteTransaccion!.Id, productsInCart);
 
                 if (!responseGenerarDetalle.IsSuccess)
                 {
@@ -1292,9 +1291,9 @@ namespace FacturacionElectronicaSRI.Repository.Service
         }
 
         /// <summary>
-        /// Este metodo permite enviar la factura electronica por correo al cliente registrado
+        /// Este metodo permite enviar la factura electronica por correo al cliente registrado.
         /// </summary>
-        /// <returns>Retorna un mensaje afirmativo o negativo segun se haya o no enviado el correo</returns>
+        /// <returns>Retorna un mensaje afirmativo o negativo segun se haya o no enviado el correo.</returns>
         private async Task<Response> EnviarFactura(int comprobanteId) // Aqui se deben cambiar las rutas porque aun no esta validada la firma en los documentos xml, Se debe revisar
         {
             try

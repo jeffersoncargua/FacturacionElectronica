@@ -10,11 +10,11 @@
 
             CRespuestaRecepcion resRecepcion = sri.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
 
-            if (resRecepcion.Estado.Equals("DEVUELTA"))
+            if (resRecepcion.Estado!.Equals("DEVUELTA"))
             {
-                foreach (var comprobanteRecepcion in resRecepcion.Comprobantes)
+                foreach (var comprobanteRecepcion in resRecepcion.Comprobantes!)
                 {
-                    foreach (var mensajeComprobante in comprobanteRecepcion.Mensajes)
+                    foreach (var mensajeComprobante in comprobanteRecepcion.Mensajes!)
                     {
                         mensaje = mensajeComprobante.mensaje;
                         mensaje = mensajeComprobante.InformacionAdicional;

@@ -65,29 +65,6 @@ namespace Facturacion_Electronica.Controllers
             return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
         }
 
-        /*// [HttpPost("UpdateFileEmpresa")]
-        // [ProducesResponseType(StatusCodes.Status201Created)]
-        // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        // [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        // public async Task<ActionResult<ApiResponse>> UpdateCertificate([FromQuery] string ruc, [FromQuery] string tipoArchivo, IFormFile? file = null)
-        // {
-        //    var response = await _empresaRepository.UpdatePathFileAsync(ruc, tipoArchivo, file);
-
-        //    return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
-        // }*/
-
-        /*[HttpPut("UpdateEmpresa/{id:int}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> Update(int id, [FromBody] EmpresaDto empresaDto)
-        {
-            var response = await _empresaRepository.UpdateEmpresaAsync(id, empresaDto);
-
-            return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
-        }*/
-
         [HttpPut("UpdateEmpresa/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

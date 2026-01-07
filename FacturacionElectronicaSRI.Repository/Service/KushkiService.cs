@@ -23,7 +23,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
             _kushkiConfig = kushkiConfig;
             _db = db;
             this._response = new();
-
         }
 
         /// <summary>
@@ -66,8 +65,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                     listProducts.Add(producto);
                 }
-
-
 
                 object requestCharge = ventaDto.IsDeferred
                     ? new RequestDeferredChargeDto()
@@ -200,7 +197,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 var content = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<ResponseKushkiPayment>(content);
 
-                if (response.IsSuccessStatusCode && result.details.transactionStatus == "APPROVAL")
+                if (response.IsSuccessStatusCode && result!.details.transactionStatus == "APPROVAL")
                 {
                     TblKushkiPayment kushkiPayment = new()
                     {
@@ -244,7 +241,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Message = $"{result.details.responseText}. Verifique si su tarjeta tiene fondos o crédito. Presionando el icono del carrito de compras e inténtelo nuevamente.";
+                _response.Message = $"{result!.details.responseText}. Verifique si su tarjeta tiene fondos o crédito. Presionando el icono del carrito de compras e inténtelo nuevamente.";
 
                 return _response;
             }
@@ -290,7 +287,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     _response.IsSuccess = true;
                     _response.StatusCode = HttpStatusCode.Created;
                     _response.Message = $"Se genero el token de pago de kushki";
-                    _response.Result = result.token;
+                    _response.Result = result!.token;
 
                     return _response;
                 }

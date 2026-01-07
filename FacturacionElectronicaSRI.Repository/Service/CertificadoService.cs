@@ -13,7 +13,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
 {
     public class CertificadoService : ICertificadoService
     {
-        internal X509Certificate2 _x509Certificate2;
+        internal X509Certificate2? _x509Certificate2;
         private readonly IHostingEnvironment _webhostingEnvironment;
         private readonly ILogger<CertificadoService> _logger;
         public CertificadoService(ILogger<CertificadoService> logger, IHostingEnvironment webhostingEnvironment)
@@ -34,8 +34,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
         public void CargarDesdeP12(string rutaCertificado, string contrasena)
         {
-            _logger.LogTrace("Cargando Certificado desde archivo p12" + rutaCertificado);
-
             try
             {
                 string rutaCarpeta = _webhostingEnvironment.ContentRootPath + "\\Archivos";
@@ -44,21 +42,14 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 if (File.Exists(archivoCertificado))
                 {
-                    Console.WriteLine("Si existe");
-
                     using X509Store store = new("My", StoreLocation.CurrentUser);
 
                     _x509Certificate2 = new X509Certificate2(File.ReadAllBytes(archivoCertificado), contrasena, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
-
-                    _logger.LogDebug("Certificado cargado");
                 }
-
-                // throw new Exception("No existe el ceritificado P12");
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error cargando certificado desde String base64 p12." + ex.Message);
-                throw;
+                throw new Exception("Error cargando certificado desde String base64 p12." + ex.Message);
             }
         }
 
@@ -81,8 +72,9 @@ namespace FacturacionElectronicaSRI.Repository.Service
             var xadesService = new XadesService();
             var parameters = new SignatureParameters()
             {
-                // SignatureMethod = SignatureMethod.RSAwithSHA1,
+                // SignatureMethod = SignatureMethod.RSAwithSHA1, // Se quito esta linea porque el SRI emplea encriptacion actual como SHA256
                 SignatureMethod = SignatureMethod.RSAwithSHA256,
+
                 // DigestMethod = DigestMethod.SHA1,
                 DigestMethod = DigestMethod.SHA256,
                 SigningDate = new DateTime?(DateTime.Now),

@@ -93,10 +93,6 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Archivos\" />
-  </ItemGroup>
-
   <PropertyGroup>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
