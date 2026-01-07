@@ -26,5 +26,7 @@ namespace FacturacionElectronicaSRI.Data.Model.DetalleVenta.DTO
         public decimal VentaIva { get; set; } // Permite obtener el valor del iva de la venta del producto
 
         public decimal Total { get; set; } // Permite obtener el valor total de la venta del producto
+
+        public required string Detalle { get; set; } // Permite mostarar el detalle con la talla en caso de venta
     }
 }

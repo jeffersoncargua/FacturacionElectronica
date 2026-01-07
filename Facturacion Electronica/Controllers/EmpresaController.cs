@@ -100,7 +100,7 @@ namespace Facturacion_Electronica.Controllers
             return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
         }
 
-        [HttpPut("DeleteEmpresa/{id:int}")]
+        [HttpDelete("DeleteEmpresa/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

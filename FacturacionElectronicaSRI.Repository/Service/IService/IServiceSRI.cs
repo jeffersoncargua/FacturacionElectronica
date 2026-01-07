@@ -12,30 +12,34 @@ namespace FacturacionElectronicaSRI.Repository.Service.IService
 {
     public interface IServiceSRI
     {
-        // Task<ResponseAutorizacionSRI> AutorizacionSRI(string claveAcceso, string rucEmpresa);
-        ResponseAutorizacionSRI AutorizacionSRI(RutasFacturacionDto rutasFacturacionDto);
+        // ResponseAutorizacionSRI AutorizacionSRI(RutasFacturacionDto rutasFacturacionDto);
+        ResponseAutorizacionSRI AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso);
 
         // Task<ViewXmlDto> FirmarXML(string claveAcceso, string rucEmpresa);
-        ViewXmlDto FirmarXML(RutasFacturacionDto rutasFacturacionDto);
+        // ViewXmlDto FirmarXML(RutasFacturacionDto rutasFacturacionDto);
+
+        ViewXmlDto FirmarXML(EmpresaDto empresaDto, string claveAcceso, string pathXmlGenerated);
 
         string GenerarClaveAcceso(string fecha, string tipoComprobante, string rucEmpresa, string ambiente, string estab, string ptoEmi, string secuencial, string idCod);
 
         // Task<XmlDocument> GetXMLFactura(int idComprobanteVenta, int ambiente, string rucEmpresa);
-        XmlDocument GetXMLFactura(EmpresaDto empresa, ComprobanteVentaDto comprobanteVentaDto, ClienteDto clienteDto, List<DetalleVentaDto> detalleVentas);
+        XmlDocument GetXMLFactura(EmpresaDto empresa, ComprobanteVentaDto comprobanteVentaDto, ClienteDto clienteDto, List<DetalleVentaDto> detalleVentas, int plazos);
 
         // Task<ResponseXmlDto> GenerarXML(string rucEmpresa, int idComprobanteVenta);
-        ResponseXmlDto GenerarXML(EmpresaDto empresa, ComprobanteVentaDto comprobanteVentaDto, ClienteDto clienteDto, List<DetalleVentaDto> detalleVentas);
+        ResponseXmlDto GenerarXML(EmpresaDto empresa, ComprobanteVentaDto comprobanteVentaDto, ClienteDto clienteDto, List<DetalleVentaDto> detalleVentas, int plazos);
 
         XmlDocument GetXmlDocument(XDocument document);
 
         // Task<ResponseRecepcionSRI> RecepcionSRI(string claveAcceso, string rucEmpresa);
-        ResponseRecepcionSRI RecepcionSRI(RutasFacturacionDto rutasFacturacionDto);
+        // ResponseRecepcionSRI RecepcionSRI(RutasFacturacionDto rutasFacturacionDto);
+
+        ResponseRecepcionSRI RecepcionSRI(string pathSigned, string claveAcceso);
 
         CRespuestaRecepcion RecepcionComprobante(string path);
 
         bool XMLAutorizado(string patchCData, string patchOut, string estadoAutorizado, string numeroAutorizado, string fechaAutorizado);
 
-        void XMLNoAutorizado(string patchCData, string patchOut);
+        void XMLNoAutorizado(string patchCData, string patchOut, string estadoNoAutorizado, string fechaNoAutorizado);
 
         string SerializarAXML<T>(T objeto);
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FacturacionElectronica.Utility;
+using FacturacionElectronicaSRI.Data.Model.Kushki.DTO;
 using FacturacionElectronicaSRI.Data.Model.Venta.DTO;
 using FacturacionElectronicaSRI.Repository.Service.IService;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,13 @@ namespace Facturacion_Electronica.Controllers
     public class VentaController : ControllerBase
     {
         private readonly IVentaService _ventaRepository;
+        private readonly IKushkiService _kushkiService;
         private readonly IMapper _mapper;
         protected ApiResponse _response;
-        public VentaController(IVentaService ventaRepository, IMapper mapper)
+        public VentaController(IVentaService ventaRepository, IKushkiService kushkiService, IMapper mapper)
         {
             _ventaRepository = ventaRepository;
+            _kushkiService = kushkiService;
             _mapper = mapper;
             this._response = new();
         }
@@ -82,6 +85,17 @@ namespace Facturacion_Electronica.Controllers
         public async Task<ActionResult<ApiResponse>> GenerarVenta([FromBody] VentaDto ventaDto)
         {
             var response = await _ventaRepository.GenerarVenta(ventaDto);
+
+            return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
+        }
+
+        [HttpPost("CreateTokenPay")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> GenerarTokenKushki([FromBody] RequestTokenDto requestTokenDto)
+        {
+            var response = await _kushkiService.GenerarTokenKushki(requestTokenDto);
 
             return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
         }

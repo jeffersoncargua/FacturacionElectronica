@@ -47,11 +47,12 @@ builder.Services.AddScoped<IRutasFacturacionRepository, RutasFacturacionReposito
 builder.Services.AddScoped<IDetalleVentaRepository, DetalleVentaRepository>();
 builder.Services.AddScoped<IAlmacenadorArchivos, AlmacenadorArchivos>();
 
-// Add Services SRI and Certificate Services
+// Add Services: SRI, Certificate, Venta, Email and Kushki Services
 builder.Services.AddScoped<IVentaService, VentaService>();
 builder.Services.AddScoped<ICertificadoService, CertificadoService>();
 builder.Services.AddScoped<IServiceSRI, ServiceSRI>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IKushkiService, KushkiService>();
 
 // please kindly ensure what license is appropriate for your project - Permite utilizar el generador QuestPdf de forma gratuita
 QuestPDF.Settings.License = LicenseType.Community;
@@ -59,6 +60,10 @@ QuestPDF.Settings.License = LicenseType.Community;
 // Add Email Configuration services
 var emailConfiguration = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
 builder.Services.AddSingleton(emailConfiguration);
+
+// Add Kushki Services
+var kushkiConfig = builder.Configuration.GetSection("KushkiConfig").Get<KushkiConfig>();
+builder.Services.AddSingleton(kushkiConfig);
 
 // Add ApplicationURL configuration services
 var appConfig = builder.Configuration.GetSection("ApplicationURL").Get<ApplicationURL>();

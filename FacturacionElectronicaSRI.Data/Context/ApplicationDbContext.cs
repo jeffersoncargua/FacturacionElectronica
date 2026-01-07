@@ -16,5 +16,6 @@ namespace FacturacionElectronicaSRI.Data.Context
         public DbSet<TblComprobanteVenta> TblComprobanteVenta { get; set; }
         public DbSet<TblDetalleVenta> TblDetalleVenta { get; set; }
         public DbSet<TblRutasXML> TblRutasXML { get; set; }
+        public DbSet<TblKushkiPayment> TblKushkiPayment { get; set; }
     }
 }

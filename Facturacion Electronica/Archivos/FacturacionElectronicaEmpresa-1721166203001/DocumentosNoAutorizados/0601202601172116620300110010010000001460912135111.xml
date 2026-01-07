@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<autorizacion>
+  <estado>NO AUTORIZADO</estado>
+  <fechaAutorizacion class="fechaAutorizacion">2026-01-06T18:02:34-05:00</fechaAutorizacion>
+  <comprobante><![CDATA[System.Xml.XmlDocument]]></comprobante>
+</autorizacion>

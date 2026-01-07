@@ -66,7 +66,7 @@ namespace Facturacion_Electronica.Controllers
             return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
         }
 
-        [HttpPut("DeleteCostumer/{id:int}")]
+        [HttpDelete("DeleteCostumer/{id:int}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

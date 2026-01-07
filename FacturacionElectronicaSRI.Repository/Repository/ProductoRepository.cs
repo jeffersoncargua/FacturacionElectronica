@@ -51,7 +51,6 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                         productoDto.File.CopyTo(fileStream);
 
                         // string pathImage = @"\Imagen\" + productoDto.CodigoPrincipal + extension;
-
                         string pathImage = _appUrl.Url + @"/Imagen/" + productoDto.CodigoPrincipal + extension;
 
                         productoDto.PathImagen = pathImage;
@@ -79,11 +78,39 @@ namespace FacturacionElectronicaSRI.Repository.Repository
             }
         }
 
-        public async Task<Response> GetAllProductoAsync(string? query = null)
+        public async Task<Response> GetCantProductoAsync()
         {
             try
             {
-                var productosDb = await this.GetAllAsync(u => u.CodigoPrincipal == query || u.CodigoAuxiliar == query || u.Descripcion.Contains(query ?? string.Empty));
+                var productosDb = await this.GetAllAsync();
+                if (productosDb != null)
+                {
+                    _response.IsSuccess = true;
+                    _response.Message = "Se ha obtenido la cantidad total de registros ";
+                    _response.Result = productosDb.Count;
+                    _response.StatusCode = HttpStatusCode.OK;
+                    return _response;
+                }
+
+                _response.IsSuccess = false;
+                _response.Message = "No se encontró el registro solicitado";
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = $"Se produjo un error en el servidor: {ex}";
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                return _response;
+            }
+        }
+
+        public async Task<Response> GetAllProductoAsync(string? query = null, int pageSize = 0, int pageNumber = 0)
+        {
+            try
+            {
+                var productosDb = await this.GetAllAsync(u => u.CodigoPrincipal == query || u.CodigoAuxiliar == query || u.Descripcion.Contains(query ?? string.Empty), pageSize: pageSize, pageNumber: pageNumber);
                 if (productosDb != null)
                 {
                     _response.IsSuccess = true;

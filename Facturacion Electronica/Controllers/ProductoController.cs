@@ -20,13 +20,24 @@ namespace Facturacion_Electronica.Controllers
             this._response = new();
         }
 
+        [HttpGet("GetCantProductos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> GetCantProduct()
+        {
+            var response = await _productoRepository.GetCantProductoAsync();
+
+            return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
+        }
+
         [HttpGet("GetProductos")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> GetAll([FromQuery] string? query = null)
+        public async Task<ActionResult<ApiResponse>> GetAll([FromQuery] string? query = null, [FromQuery] int pageSize = 0, [FromQuery] int pageNumber = 0)
         {
-            var response = await _productoRepository.GetAllProductoAsync(query);
+            var response = await _productoRepository.GetAllProductoAsync(query, pageSize, pageNumber);
 
             return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
         }
@@ -66,7 +77,7 @@ namespace Facturacion_Electronica.Controllers
             return StatusCode((int)response.StatusCode, _mapper.Map<ApiResponse>(response));
         }
 
-        [HttpPut("DeleteProducto/{id:int}")]
+        [HttpDelete("DeleteProducto/{id:int}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

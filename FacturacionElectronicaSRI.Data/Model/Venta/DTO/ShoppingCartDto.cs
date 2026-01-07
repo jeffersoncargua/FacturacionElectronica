@@ -7,6 +7,7 @@
         public required string CodigoPrincipal { get; set; } // Es el codigo principal para la busqueda
         public int Cantidad { get; set; }
         public required string Descripcion { get; set; }
+        public string? Talla { get; set; }
         public decimal PrecioUnitario { get; set; }
         public decimal Descuento { get; set; } // Es un valor en porcentaje que se da a un producto para que tenga menor valor del precio unitario
         public decimal VentaIva { get; set; } // Es el iva que se le cobra al producto

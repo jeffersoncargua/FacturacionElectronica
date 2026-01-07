@@ -7,7 +7,9 @@ namespace FacturacionElectronicaSRI.Repository.Repository.IRepository
     {
         Task<Response> UpdateProductoAsync(int id, ProductoDto productoDto);
 
-        Task<Response> GetAllProductoAsync(string? query = null);
+        Task<Response> GetAllProductoAsync(string? query = null, int pageSize = 0, int pageNumber = 0);
+
+        Task<Response> GetCantProductoAsync();
 
         Task<Response> GetProductoAsync(int id, string? query = null);
 

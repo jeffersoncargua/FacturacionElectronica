@@ -31,10 +31,11 @@ namespace FacturacionElectronicaSRI.Repository.Service
         private readonly IRutasFacturacionRepository _rutasFacturacionRepository;
         private readonly IHostingEnvironment _webHostingEnvironment;
         private readonly IEmailService _emailService;
+        private readonly IKushkiService _kushkiService;
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _db;
         protected Response _response;
-        public VentaService(IServiceSRI serviceSRI, IProductoRepository productoRepository, IDetalleVentaRepository detalleVentaRepository, IComprobanteVentaRepository comprobanteVentaRepository, IClienteRepository clienteRepository, IEmpresaRepository empresaRepository, IRutasFacturacionRepository rutasFacturacionRepository, IHostingEnvironment webHostingEnvironment, IEmailService emailService, IMapper mapper, ApplicationDbContext db)
+        public VentaService(IServiceSRI serviceSRI, IProductoRepository productoRepository, IDetalleVentaRepository detalleVentaRepository, IComprobanteVentaRepository comprobanteVentaRepository, IClienteRepository clienteRepository, IEmpresaRepository empresaRepository, IRutasFacturacionRepository rutasFacturacionRepository, IHostingEnvironment webHostingEnvironment, IEmailService emailService, IKushkiService kushkiService, IMapper mapper, ApplicationDbContext db)
         {
             _serviceSRI = serviceSRI;
             _productoRepository = productoRepository;
@@ -47,6 +48,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
             _emailService = emailService;
             _webHostingEnvironment = webHostingEnvironment;
             _db = db;
+            _kushkiService = kushkiService;
             _response = new();
         }
 
@@ -70,14 +72,14 @@ namespace FacturacionElectronicaSRI.Repository.Service
                             _response.IsSuccess = true;
                             _response.StatusCode = HttpStatusCode.OK;
                             _response.Result = _mapper.Map<ComprobanteVentaDto>(comprobanteGenerado);
-                            _response.Message = "Se genero el comprobante y se remitio para continuar con el proceso de facturacion";
+                            _response.Message = "Se genero el comprobante y se remitío para continuar con el proceso de facturación";
 
                             return _response;
                         }
 
                         _response.IsSuccess = false;
                         _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.Message = "No se encontro el comprobante generado";
+                        _response.Message = "No se encontró el comprobante generado";
 
                         return _response;
                     }
@@ -91,7 +93,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Message = $"El comprobante a registrar esta vacio";
+                _response.Message = $"El comprobante a registrar esta vacío";
 
                 return _response;
             }
@@ -105,57 +107,48 @@ namespace FacturacionElectronicaSRI.Repository.Service
             }
         }
 
-        public async Task<Response> GenerarDetalleVenta(int comprobanteId, string shoopingCart)
+        public async Task<Response> GenerarDetalleVenta(int comprobanteId, List<ShoppingCartDto> productsInCart)
         {
             try
             {
-                var productsInCart = JsonConvert.DeserializeObject<List<ShoppingCartDto>>(shoopingCart);
-                if (productsInCart != null)
+                foreach (var item in productsInCart)
                 {
-                    foreach (var item in productsInCart)
-                    {
-                        var producto = await _productoRepository.GetAsync(u => u.CodigoPrincipal == item.CodigoPrincipal, tracked: false);
+                    var producto = await _productoRepository.GetAsync(u => u.CodigoPrincipal == item.CodigoPrincipal, tracked: false);
 
-                        if (producto != null)
+                    if (producto != null)
+                    {
+                        DetalleVentaDto detalleVenta = new()
                         {
-                            DetalleVentaDto detalleVenta = new()
-                            {
-                                IdComprobanteVenta = comprobanteId,
-                                IdProducto = producto.Id,
-                                Cantidad = item.Cantidad,
-                                PrecioUnitario = item.PrecioUnitario,
-                                Estado = "abierto",
-                                Descuento = item.Descuento,
-                                VentaIva = item.VentaIva,
-                                Total = item.Total,
-                            };
+                            IdComprobanteVenta = comprobanteId,
+                            IdProducto = producto.Id,
+                            Cantidad = item.Cantidad,
+                            PrecioUnitario = item.PrecioUnitario,
+                            Estado = "abierto",
+                            Descuento = item.Descuento,
+                            VentaIva = item.VentaIva,
+                            Total = item.Total,
+                            Detalle = item.Descripcion,
+                        };
 
-                            await _detalleVentaRepository.CreateDetalleVentaAsync(detalleVenta);
-                        }
+                        await _detalleVentaRepository.CreateDetalleVentaAsync(detalleVenta);
                     }
+                }
 
-                    var productosDetalleVenta = await _detalleVentaRepository.GetAllAsync(u => u.IdComprobanteVenta == comprobanteId, includeProperties: "ComprobanteVenta,Producto");
+                var productosDetalleVenta = await _detalleVentaRepository.GetAllAsync(u => u.IdComprobanteVenta == comprobanteId, includeProperties: "ComprobanteVenta,Producto");
 
-                    if (productosDetalleVenta != null && productosDetalleVenta.Count > 0)
-                    {
-                        _response.IsSuccess = true;
-                        _response.StatusCode = HttpStatusCode.Created;
-                        _response.Message = "Registro exitoso";
-                        _response.Result = _mapper.Map<List<DetalleVentaDto>>(productosDetalleVenta);
-
-                        return _response;
-                    }
-
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Message = "No se encontraron los articulos para realizar la transaccion";
+                if (productosDetalleVenta != null && productosDetalleVenta.Count > 0)
+                {
+                    _response.IsSuccess = true;
+                    _response.StatusCode = HttpStatusCode.Created;
+                    _response.Message = "Registro exitoso";
+                    _response.Result = _mapper.Map<List<DetalleVentaDto>>(productosDetalleVenta);
 
                     return _response;
                 }
 
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Message = "No se pudo realizar la transaccion";
+                _response.Message = "No se encontraron los artículos para realizar la transacción";
 
                 return _response;
             }
@@ -169,20 +162,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
             }
         }
 
-        public async Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto, string pathXml)
+        public async Task<Response> GenerarRideYPdf(ComprobanteVentaDto comprobanteDto, string pathXml, int plazos)
         {
-            /*//var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == comprobanteDto.DocSri, tracked: false);
-            //if (rutaXmlDb == null)
-            //{
-            //    _response.IsSuccess = false;
-            //    _response.Message = "La ruta del comprobante no esta registrado. No se pudo generar el documento PDF";
-            //    _response.StatusCode = HttpStatusCode.NotFound;
-
-            //    return _response;
-            //}
-
-            //var rutasXmlDto = _mapper.Map<RutasFacturacionDto>(rutaXmlDb);*/
-
             var detallesDb = await _detalleVentaRepository.GetAllAsync(u => u.IdComprobanteVenta == comprobanteDto.Id, includeProperties: "ComprobanteVenta,Producto");
             if (detallesDb.Count == 0)
             {
@@ -192,17 +173,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 return _response;
             }
-
-            // Descomentar cuando se lo pase al paso 7 para generar correctamente el pdf de la factura
-            /*//var rutaxmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == comprobanteDb.DocSri);
-            //if (rutaxmlDb == null)
-            //{
-            //    _response.IsSuccess = false;
-            //    _response.Message = "El xml autorizado no esta registrado. No se pudo generar el documento PDF";
-            //    _response.StatusCode = HttpStatusCode.NotFound;
-
-            //    return _response;
-            //} */
 
             var documentPdf = Document.Create(container =>
             {
@@ -235,7 +205,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
                                 .Width(230)
                                 .Height(180)
 
-                                // .Image(Placeholders.Image);
                                 .Image(comprobanteDto.Empresa!.PathLogo);
 
                                 // Informacion de la empresa
@@ -261,7 +230,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                                         x.ConstantItem(15);
 
-                                        x.AutoItem()
+                                        // x.AutoItem()
+                                        x.RelativeItem()
                                         .Text(comprobanteDto.Empresa.DireccionMatriz) // Aqui va la direccion principal de la empresa
                                         .FontSize(9);
                                     });
@@ -276,7 +246,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                                         row.ConstantItem(15);
 
-                                        row.AutoItem()
+                                        // row.AutoItem()
+                                        row.RelativeItem()
                                         .Text(comprobanteDto.Empresa.DireccionMatriz) // Aqui va la direccion de la sucursal de la empresa
                                         .FontSize(9);
                                     });
@@ -559,7 +530,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                                 table.Cell().Element(CellStyle).Text(item.Producto!.CodigoPrincipal).FontSize(8).AlignCenter();
                                 table.Cell().Element(CellStyle).Text(item.Producto.CodigoAuxiliar).FontSize(8).AlignCenter();
                                 table.Cell().Element(CellStyle).Text(item.Cantidad.ToString()).FontSize(8).AlignRight();
-                                table.Cell().Element(CellStyle).Text(item.Producto.Descripcion).FontSize(8).AlignLeft();
+                                table.Cell().Element(CellStyle).Text(item.Detalle).FontSize(8).AlignLeft();
                                 table.Cell().Element(CellStyle).Text($"$ {item.Producto.PrecioUnitario}").FontSize(8).AlignRight();
                                 table.Cell().Element(CellStyle).Text($"$ {item.Descuento}").FontSize(8).AlignRight();
                                 table.Cell().Element(CellStyle).Text($"$ {item.Total}").FontSize(8).AlignRight();
@@ -644,18 +615,48 @@ namespace FacturacionElectronicaSRI.Repository.Service
                                        {
                                            table.ColumnsDefinition(columns =>
                                            {
-                                               columns.ConstantColumn(150);
-                                               columns.ConstantColumn(100);
+                                               if (plazos > 0)
+                                               {
+                                                   columns.ConstantColumn(90);
+                                                   columns.ConstantColumn(50);
+                                                   columns.ConstantColumn(55);
+                                                   columns.ConstantColumn(55);
+                                               }
+                                               else
+                                               {
+                                                   columns.ConstantColumn(150);
+                                                   columns.ConstantColumn(100);
+                                               }
                                            });
 
                                            table.Header(header =>
                                            {
-                                               header.Cell().Element(CellStyle).Text("Forma de pago").FontSize(8).AlignCenter().SemiBold();
-                                               header.Cell().Element(CellStyle).Text("Total").FontSize(8).AlignCenter().SemiBold();
+                                               if (plazos > 0)
+                                               {
+                                                   header.Cell().Element(CellStyle).Text("Forma de pago").FontSize(8).AlignCenter().SemiBold();
+                                                   header.Cell().Element(CellStyle).Text("Total").FontSize(8).AlignCenter().SemiBold();
+                                                   header.Cell().Element(CellStyle).Text("Plazo").FontSize(8).AlignCenter().SemiBold();
+                                                   header.Cell().Element(CellStyle).Text("Tiempo").FontSize(8).AlignCenter().SemiBold();
+                                               }
+                                               else
+                                               {
+                                                   header.Cell().Element(CellStyle).Text("Forma de pago").FontSize(8).AlignCenter().SemiBold();
+                                                   header.Cell().Element(CellStyle).Text("Total").FontSize(8).AlignCenter().SemiBold();
+                                               }
                                            });
 
-                                           table.Cell().Element(CellStyle).Text($"{comprobanteDto.FormaPago} - {FormaPagoExist(comprobanteDto.FormaPago)}").FontSize(8).AlignLeft(); // Aqui el codigo y la forma de pago con la que se realizo la venta
-                                           table.Cell().Element(CellStyle).Text(comprobanteDto.Total.ToString()).FontSize(8).AlignRight(); // Aqui va el valor total del pago por la venta que incluye el los impuesto y descuentos
+                                           if (plazos > 0)
+                                           {
+                                               table.Cell().Element(CellStyle).Text($"{comprobanteDto.FormaPago} - {FormaPagoExist(comprobanteDto.FormaPago)}").FontSize(8).AlignLeft(); // Aqui el codigo y la forma de pago con la que se realizo la venta
+                                               table.Cell().Element(CellStyle).Text(comprobanteDto.Total.ToString()).FontSize(8).AlignRight(); // Aqui va el valor total del pago por la venta que incluye el los impuesto y descuentos
+                                               table.Cell().Element(CellStyle).Text($"{plazos}").FontSize(8).AlignCenter().AlignRight();
+                                               table.Cell().Element(CellStyle).Text("meses").FontSize(8).AlignCenter().AlignRight();
+                                           }
+                                           else
+                                           {
+                                               table.Cell().Element(CellStyle).Text($"{comprobanteDto.FormaPago} - {FormaPagoExist(comprobanteDto.FormaPago)}").FontSize(8).AlignLeft(); // Aqui el codigo y la forma de pago con la que se realizo la venta
+                                               table.Cell().Element(CellStyle).Text(comprobanteDto.Total.ToString()).FontSize(8).AlignRight(); // Aqui va el valor total del pago por la venta que incluye el los impuesto y descuentos
+                                           }
                                        });
                                    });
                                 });
@@ -734,7 +735,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 });
             });
 
-            // documentPdf.ShowInCompanion();
             var ruta = Path.Combine(_webHostingEnvironment.ContentRootPath + "\\Archivos", @"FacturasPDF");
 
             if (!Directory.Exists(ruta))
@@ -748,45 +748,19 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
             var rutaDocumentoPdf = ruta + @$"\Factura-{comprobanteDto.DocSri}.pdf";
 
-            /*//RutasFacturacionDto rutaXmlWithPDF = new()
-            //{
-            //    Id = rutasXmlDto.Id,
-            //    IdEmpresa = rutasXmlDto.IdEmpresa,
-            //    ClaveAcceso = rutasXmlDto.ClaveAcceso,
-            //    EstadoRecepcion = rutasXmlDto.EstadoRecepcion,
-            //    RutaGenerados = pathXml,
-            //    RutaFirmados = rutasXmlDto.RutaFirmados,
-            //    RutaAutorizados = rutasXmlDto.RutaAutorizados,
-            //    PathXMLPDF = rutaDocumentoPdf,
-            //};
-
-            // await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutasXmlDto.Id, rutaXmlWithPDF);*/
-
-            RutasFacturacionDto rutaXmlWithPath = new()
-            {
-                IdEmpresa = comprobanteDto.IdEmpresa,
-                ClaveAcceso = comprobanteDto.DocSri,
-                EstadoRecepcion = "Pruebas Envio de factura al correo",
-                RutaGenerados = pathXml,
-                RutaFirmados = null,
-                RutaAutorizados = null,
-                PathXMLPDF = rutaDocumentoPdf,
-            };
-
-            await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaXmlWithPath);
-
             _response.IsSuccess = true;
             _response.Message = "Se genero el documento PDF de la factura";
             _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = rutaDocumentoPdf;
 
             return _response;
         }
 
         /// <summary>
-        /// Este metodo permite obtener el estilo de las celdas de la tabla para la factura en pdf.
+        /// Este método permite obtener el estilo de las celdas de la tabla para la factura en pdf.
         /// </summary>
         /// <param name="container">es el contendor de la celda que se va a utilizar en la tabla.</param>
-        /// <returns>Returna el estilo del contenedor de la celda de la tabla.</returns>
+        /// <returns>Retorna el estilo del contenedor de la celda de la tabla.</returns>
         private static IContainer CellStyle(IContainer container)
         {
             return container.Border(1).Padding(7);
@@ -794,297 +768,13 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
         public async Task<Response> GenerarVenta(VentaDto ventaDto)
         {
-            /*try
-            {
-                var clienteExist = await _clienteRepository.GetAsync(u => u.Identificacion == ventaDto.IdentificacionCliente, tracked: false);
-                var empresaExist = await _empresaRepository.GetAsync(u => u.Ruc == ventaDto.RucEmpresa, tracked: false);
-                if (empresaExist != null)
-                {
-                    if (clienteExist != null)
-                    {
-                        var comprobantes = await _comprobanteVentaRepository.GetAllAsync(tracked: false);
-                        int ultimoComprobante = comprobantes.Count > 0 ? comprobantes.OrderByDescending(x => x.IdCliente).First().Id : 0;
-
-                        // Se genera el codigo de 8 digitos
-                        string comprobanteid = "00000000";
-                        int comprobanteidNum = "00000000".Length;
-
-                        // int comprobante = ultimoComprobante.Id.ToString().Length;
-                        int comprobante = ultimoComprobante.ToString().Length;
-
-                        string comprobanteNum8 = comprobanteid.Insert(comprobanteidNum - comprobante, (ultimoComprobante + 1).ToString());
-                        string comprobanteNumero8 = comprobanteNum8.Substring(0, 8);
-
-                        ComprobanteVentaDto comprobanteVenta = new()
-                        {
-                            IdEmpresa = empresaExist.Id,
-                            IdCliente = clienteExist.Id,
-                            FechaEmision = DateTime.Now,
-                            TipoComprobante = "01",
-                            NumeroComprobante = "001-" + "001-" + $"{comprobanteNumero8}",
-                            FormaPago = "01",
-                            Descuento = 0.00M,
-                            Subtotal0 = 0.00M,
-                            Subtotal12 = 0.00M,
-                            TotalIva = ventaDto.SubTotal12,
-                            Subtotal = ventaDto.Total,
-                            DocSri = null,
-                        };
-
-                        await _comprobanteVentaRepository.CreateComprobanteVentaAsync(comprobanteVenta);
-
-                        var nuevosComprobantes = await _comprobanteVentaRepository.GetAllAsync(tracked: false);
-                        var comprobanteTransaccion = nuevosComprobantes.OrderByDescending(x => x.Id).First(y => y.IdCliente == clienteExist.Id);
-
-                        if (comprobanteTransaccion != null)
-                        {
-                            var responseGenerarDetalle = await GenerarDetalleVenta(comprobanteTransaccion.Id, ventaDto.ShoppingCart);
-
-                            if (responseGenerarDetalle.IsSuccess)
-                            {
-                                Random generator = new();
-                                string numeroGenerado = generator.Next(0, 10000000).ToString("D8");
-                                var secuencial = comprobanteTransaccion.NumeroComprobante.Split("-");
-
-                                // Para la clave de acceso basta con obtener el valor de "Ambiente" del objeto empresa para gestionar
-                                // la clave de acceso, asi como, realizar la gestion de los documentos xml necesarios para generar la
-                                // factura electronica
-                                string claveAcceso = _serviceSRI.GenerarClaveAcceso(comprobanteTransaccion.FechaEmision.ToString("ddMMyyyy"), comprobanteTransaccion.FormaPago, empresaExist.Ruc, empresaExist.Ambiente.ToString(), secuencial[0].ToString(), secuencial[1].ToString(), secuencial[2].ToString(), numeroGenerado);
-
-                                ComprobanteVentaDto comprobanteVentaConDocSri = new()
-                                {
-                                    Id = comprobanteTransaccion.Id,
-                                    IdCliente = comprobanteTransaccion.IdCliente,
-                                    IdEmpresa = comprobanteTransaccion.IdEmpresa,
-                                    TipoComprobante = comprobanteTransaccion.TipoComprobante,
-                                    NumeroComprobante = comprobanteTransaccion.NumeroComprobante,
-                                    FechaEmision = comprobanteTransaccion.FechaEmision,
-                                    Subtotal12 = comprobanteTransaccion.Subtotal12,
-                                    Subtotal0 = comprobanteTransaccion.Subtotal0,
-                                    FormaPago = comprobanteTransaccion.FormaPago,
-                                    Descuento = comprobanteTransaccion.Descuento,
-                                    Subtotal = comprobanteTransaccion.Subtotal,
-                                    TotalIva = comprobanteTransaccion.TotalIva,
-                                    DocSri = claveAcceso,
-                                };
-
-                                await _comprobanteVentaRepository.UpdateComprobanteVentaAsync(comprobanteTransaccion.Id, comprobanteVentaConDocSri);
-
-                                var isXmlGenerated = _serviceSRI.GenerarXML(_mapper.Map<EmpresaDto>(empresaExist), _mapper.Map<ComprobanteVentaDto>(comprobanteTransaccion), _mapper.Map<ClienteDto>(clienteExist), (List<DetalleVentaDto>)responseGenerarDetalle.Result);
-
-                                if (isXmlGenerated.IsSuccess)
-                                {
-                                    var rutaXml = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == comprobanteTransaccion.DocSri);
-
-                                    // Permite verificar si existe la ruta del comprobante generado con la clave de acceso para la facturacion electronica con el SRI
-                                    if (rutaXml == null)
-                                    {
-                                        RutasFacturacionDto rutaXmlDto = new()
-                                        {
-                                            RutaFirmados = null,
-                                            RutaAutorizados = null,
-                                            RutaGenerados = isXmlGenerated.PathXML,
-                                            ClaveAcceso = comprobanteTransaccion.DocSri,
-                                            IdEmpresa = comprobanteTransaccion.IdEmpresa,
-                                            PathXMLPDF = null,
-                                            EstadoRecepcion = null,
-                                        };
-
-                                        await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaXmlDto);
-
-                                        // var firmaResponse = await _serviceSRI.FirmarXML(claveAcceso, empresaExist.Ruc);
-                                        var rutaXmlGenerado = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso);
-                                        if (rutaXmlGenerado != null)
-                                        {
-                                            var firmaResponse = _serviceSRI.FirmarXML(_mapper.Map<RutasFacturacionDto>(rutaXmlGenerado));
-
-                                            if (firmaResponse.IsSuccess)
-                                            {
-                                                var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso);
-
-                                                RutasFacturacionDto rutaConFirma = new()
-                                                {
-                                                    Id = rutaXmlDb.Id,
-                                                    IdEmpresa = rutaXmlDb.IdEmpresa,
-                                                    ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                                                    RutaGenerados = rutaXmlDb.RutaGenerados,
-                                                    RutaFirmados = firmaResponse.RutaXmlFirmado,
-                                                    RutaAutorizados = null,
-                                                    EstadoRecepcion = null,
-                                                    PathXMLPDF = null,
-                                                };
-
-                                                // Se actualiza la ruta con el xml firmado
-                                                await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaConFirma);
-
-                                                var rutaXmlFirmado = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso);
-
-                                                // var responseRecepcion = await _serviceSRI.RecepcionSRI(claveAcceso, empresaExist.Ruc);
-                                                var responseRecepcion = _serviceSRI.RecepcionSRI(_mapper.Map<RutasFacturacionDto>(rutaXmlFirmado));
-
-                                                if (responseRecepcion.Estado.Equals("RECIBIDA"))
-                                                {
-                                                    RutasFacturacionDto rutaRecibida = new()
-                                                    {
-                                                        Id = rutaXmlDb.Id,
-                                                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                                                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                                                        EstadoRecepcion = responseRecepcion.Estado,
-                                                        PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                                                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                                                        RutaFirmados = rutaXmlDb.RutaFirmados,
-                                                        RutaAutorizados = rutaXmlDb.RutaAutorizados,
-                                                    };
-
-                                                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaRecibida);
-
-                                                    await _db.SaveChangesAsync();
-                                                }
-                                                else
-                                                {
-                                                    RutasFacturacionDto rutaNoRecibida = new()
-                                                    {
-                                                        Id = rutaXmlDb.Id,
-                                                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                                                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                                                        EstadoRecepcion = responseRecepcion.Estado,
-                                                        PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                                                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                                                        RutaFirmados = rutaXmlDb.RutaFirmados,
-                                                        RutaAutorizados = rutaXmlDb.RutaAutorizados,
-                                                    };
-
-                                                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaNoRecibida);
-
-                                                    await _db.SaveChangesAsync();
-
-                                                    _response.IsSuccess = false;
-                                                    _response.StatusCode = HttpStatusCode.BadRequest;
-                                                    _response.Message = $"La factura no ha sido recibida en el SRI. El error esta en: {responseRecepcion.Estado}";
-
-                                                    return _response;
-                                                }
-
-                                                // var responseAutorizacion = await _serviceSRI.AutorizacionSRI(claveAcceso, empresaExist.Ruc);
-                                                var responseAutorizacion = _serviceSRI.AutorizacionSRI(_mapper.Map<RutasFacturacionDto>(rutaXmlFirmado));
-
-                                                if (responseAutorizacion.Estado.Equals("AUTORIZADO"))
-                                                {
-                                                    RutasFacturacionDto rutaAutorizada = new()
-                                                    {
-                                                        Id = rutaXmlDb.Id,
-                                                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                                                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                                                        EstadoRecepcion = responseAutorizacion.Estado,
-                                                        PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                                                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                                                        RutaFirmados = rutaXmlDb.RutaFirmados,
-                                                        RutaAutorizados = responseAutorizacion.PathXMLAutorizado,
-                                                    };
-
-                                                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaAutorizada);
-
-                                                    await _db.SaveChangesAsync();
-                                                }
-                                                else
-                                                {
-                                                    RutasFacturacionDto rutaNoAutorizada = new()
-                                                    {
-                                                        Id = rutaXmlDb.Id,
-                                                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                                                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                                                        EstadoRecepcion = responseAutorizacion.Estado,
-                                                        PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                                                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                                                        RutaFirmados = rutaXmlDb.RutaFirmados,
-                                                        RutaAutorizados = responseAutorizacion.PathXMLAutorizado,
-                                                    };
-
-                                                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaNoAutorizada);
-
-                                                    await _db.SaveChangesAsync();
-
-                                                    _response.IsSuccess = false;
-                                                    _response.StatusCode = HttpStatusCode.BadRequest;
-                                                    _response.Message = $"La factura no ha sido autorizada en el SRI. El error esta en: {responseRecepcion.Estado}";
-
-                                                    return _response;
-                                                }
-
-                                                _response.IsSuccess = true;
-                                                _response.StatusCode = HttpStatusCode.OK;
-                                                _response.Message = "Se ha generado la factura electronica con exito.";
-
-                                                return _response;
-                                            }
-                                        }
-
-                                        _response.IsSuccess = false;
-                                        _response.StatusCode = HttpStatusCode.BadRequest;
-                                        _response.Message = "No se pudo firmar el archivo xml. Intentelo nuevamente.";
-
-                                        return _response;
-                                    }
-
-                                    _db.Database.RollbackTransaction();
-                                    _db.ChangeTracker.Clear();
-
-                                    _response.IsSuccess = false;
-                                    _response.StatusCode = HttpStatusCode.BadRequest;
-                                    _response.Message = "Ya existe un archivo xml con una clave de acceso similar. Intentelo nuevamente.";
-
-                                    return _response;
-                                }
-
-                                _response.IsSuccess = false;
-                                _response.StatusCode = HttpStatusCode.BadRequest;
-                                _response.Message = "No se genero el xml la venta para la facturacion. Intentelo nuevamente.";
-
-                                return _response;
-                            }
-
-                            _response.IsSuccess = false;
-                            _response.StatusCode = HttpStatusCode.BadRequest;
-                            _response.Message = responseGenerarDetalle.Message;
-
-                            return _response;
-                        }
-
-                        _response.IsSuccess = false;
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.Message = "No se ha generado el comprobante de venta para la transaccion. Intentelo nuevamente.";
-
-                        return _response;
-                    }
-
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.Message = "Cliente no registrado. Registre al nuevo cliente.";
-
-                    return _response;
-                }
-
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.Message = "La empresa no esta registrada.";
-
-                return _response;
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Message = $"Ha ocurrido un error. Error: {ex.Message}";
-
-                return _response;
-            }*/
-
             using var transaccion = await _db.Database.BeginTransactionAsync();
 
             try
             {
                 var clienteExist = await _clienteRepository.GetAsync(u => u.Identificacion == ventaDto.IdentificacionCliente, tracked: false);
                 var empresaExist = await _empresaRepository.GetAsync(u => u.Ruc == ventaDto.RucEmpresa, tracked: false);
+                var productsInCart = JsonConvert.DeserializeObject<List<ShoppingCartDto>>(ventaDto.ShoppingCart);
                 if (empresaExist == null)
                 {
                     _response.IsSuccess = false;
@@ -1099,13 +789,35 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.Message = "Cliente no registrado. Registre al nuevo cliente.";
+                    _response.Message = "Cliente no registrado. Regístrese por favor!.";
+                    _response.Result = null;
+
+                    return _response;
+                }
+
+                if (productsInCart == null || productsInCart.Count == 0)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Message = "El carrito esta vacío.";
                     _response.Result = null;
 
                     return _response;
                 }
 
                 // 1. Se genera el comprobante
+                if (string.IsNullOrEmpty(FormaPagoExist(ventaDto.FormaPago)))
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Message = "No está registrada la forma de pago";
+                    _response.Result = null;
+
+                    return _response;
+                }
+
+                var formaPago = ventaDto.FormaPago; // Se almacena el codigo de la forma de pago de acuerdo al sri
+                var tipoComprobante = "01"; // Se almacena el codigo del comprobante que acepta el sri
                 var comprobantes = await _comprobanteVentaRepository.GetAllAsync();
                 int ultimoComprobante = comprobantes.Count > 0 ? comprobantes.OrderByDescending(x => x.Id).First().Id : 0;
 
@@ -1113,33 +825,44 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 string comprobanteid = "000000000";
                 int comprobanteidNum = "000000000".Length;
 
-                // int comprobante = ultimoComprobante.Id.ToString().Length;
                 int comprobante = ultimoComprobante.ToString().Length;
 
+                // Esta seccion permite generar el numero de comprobante con 9 digitos, considerando la longitud del Id del ultimo comprobante
                 string comprobanteNum9 = comprobanteid.Insert(comprobanteidNum - comprobante, (ultimoComprobante + 1).ToString());
-                string comprobanteNumero9 = comprobanteNum9.Substring(0, 9);
+                string comprobanteNumero9 = comprobanteNum9.Substring(0, 9); // permite rellenar con una subcadena de 0 hasta completar 9 digitos que incluye el valor del ultimo comprobante + 1
 
                 // Proceso para generar la clave de acceso(DocSri)
                 Random generator = new();
-                string numeroGenerado = generator.Next(0, 10000000).ToString("D8");
-                string numeroComprobante = "001-" + "001-" + comprobanteNumero9;
+                string numeroGenerado = generator.Next(0, 10000000).ToString("D8"); // permite generar un numero aleatorio de 8 digitos enteros
+                string numeroComprobante = "001-" + "001-" + comprobanteNumero9; // es el formato del numero de comprobante que acepta el SRI considerando
+                                                                                 // el punto de emision y el establecimiento que para este caso es 001 en ambos casos
+                                                                                 // debido a que solo existe una sola tienda
                 var secuencial = numeroComprobante.Split("-");
                 var fechaEmision = DateTime.Now;
-                var formaPago = "01";
 
                 // Para la clave de acceso basta con obtener el valor de "Ambiente" del objeto empresa para gestionar
                 // la clave de acceso, asi como, realizar la gestion de los documentos xml necesarios para generar la
                 // factura electronica
-                string claveAcceso = _serviceSRI.GenerarClaveAcceso(fechaEmision.ToString("ddMMyyyy"), formaPago, empresaExist.Ruc, empresaExist.Ambiente.ToString(), secuencial[0].ToString(), secuencial[1].ToString(), secuencial[2].ToString(), numeroGenerado);
+                string claveAcceso = _serviceSRI.GenerarClaveAcceso(fechaEmision.ToString("ddMMyyyy"), tipoComprobante, empresaExist.Ruc, empresaExist.Ambiente.ToString(), secuencial[0].ToString(), secuencial[1].ToString(), secuencial[2].ToString(), numeroGenerado);
+
+                if (string.IsNullOrEmpty(claveAcceso))
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "No se pudo generar la clave de acceso correctamente";
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Result = null;
+
+                    return _response;
+                }
 
                 ComprobanteVentaDto comprobanteVenta = new()
                 {
                     IdEmpresa = empresaExist.Id,
                     IdCliente = clienteExist.Id,
                     FechaEmision = fechaEmision,
-                    TipoComprobante = "01",
+                    TipoComprobante = "01", // Es el tipo de comprobante que para este caso es de factura
                     NumeroComprobante = numeroComprobante,
-                    FormaPago = formaPago,
+                    FormaPago = ventaDto.FormaPago,
                     Descuento = ventaDto.Descuento,
                     Subtotal0 = 0.00M,
                     Subtotal15 = ventaDto.SubTotal15,
@@ -1163,26 +886,9 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     return _response;
                 }
 
-                // await _db.TblComprobanteVenta.AddAsync(_mapper.Map<TblComprobanteVenta>(comprobanteVenta));
-                // await _db.SaveChangesAsync();
-                // var nuevosComprobantes = await _comprobanteVentaRepository.GetAllAsync(tracked: false);
-                // var comprobanteTransaccion = nuevosComprobantes.OrderByDescending(x => x.Id).First(y => y.IdCliente == clienteExist.Id);
-                var comprobanteTransaccion = (ComprobanteVentaDto)comprobanteGeneradoResponse.Result;
-
                 // 2. Se generan los detalles de la venta
-                if (comprobanteTransaccion == null)
-                {
-                    await transaccion.RollbackAsync();
-
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Message = "No se ha generado el comprobante de venta para la transaccion. Intentelo nuevamente.";
-                    _response.Result = null;
-
-                    return _response;
-                }
-
-                var responseGenerarDetalle = await GenerarDetalleVenta(comprobanteTransaccion.Id, ventaDto.ShoppingCart);
+                var comprobanteTransaccion = (ComprobanteVentaDto)comprobanteGeneradoResponse.Result;
+                var responseGenerarDetalle = await GenerarDetalleVenta(comprobanteTransaccion.Id, productsInCart);
 
                 if (!responseGenerarDetalle.IsSuccess)
                 {
@@ -1198,24 +904,38 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 var productosDetalleVenta = (List<DetalleVentaDto>)responseGenerarDetalle.Result;
 
-                // 3. Se genera el archivo (factura) xml
+                // 3. Se genera el pago con kushki
+                // Primero se verifica que se haya generado el comprobante para la factura
                 var comprobanteConDocSri = await _comprobanteVentaRepository.GetAsync(u => u.Id == comprobanteTransaccion.Id, tracked: false);
-
-                // var comprobanteConDocSri = await _db.TblComprobanteVenta.AsNoTracking().FirstOrDefaultAsync(u => u.Id == comprobanteTransaccion.Id);
                 if (comprobanteConDocSri == null)
                 {
                     await transaccion.RollbackAsync();
 
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Message = "No se el comprobante de venta con el DocSri para la facturacion. Intentelo nuevamente.";
+                    _response.Message = "No se encontró el comprobante de venta con el DocSri para la facturacion. Intentelo nuevamente.";
                     _response.Result = null;
 
                     return _response;
                 }
 
-                // var isXmlGenerated = _serviceSRI.GenerarXML(_mapper.Map<EmpresaDto>(empresaExist), _mapper.Map<ComprobanteVentaDto>(comprobanteTransaccion), _mapper.Map<ClienteDto>(clienteExist), (List<DetalleVentaDto>)responseGenerarDetalle.Result);
-                var isXmlGenerated = _serviceSRI.GenerarXML(_mapper.Map<EmpresaDto>(empresaExist), _mapper.Map<ComprobanteVentaDto>(comprobanteConDocSri), _mapper.Map<ClienteDto>(clienteExist), _mapper.Map<List<DetalleVentaDto>>(productosDetalleVenta));
+                // Se realiza el cobro mediante la plataforma de kushki antes de generar el archivo xml
+                var responseTransactionKushki = await _kushkiService.GenerarPagoKushki(ventaDto, productsInCart, _mapper.Map<ClienteDto>(clienteExist), comprobanteConDocSri.NumeroComprobante);
+
+                if (!responseTransactionKushki.IsSuccess)
+                {
+                    await transaccion.RollbackAsync();
+
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Message = responseTransactionKushki.Message;
+                    _response.Result = null;
+
+                    return _response;
+                }
+
+                // 4. Se genera el archivo xml de la factura
+                var isXmlGenerated = _serviceSRI.GenerarXML(_mapper.Map<EmpresaDto>(empresaExist), _mapper.Map<ComprobanteVentaDto>(comprobanteConDocSri), _mapper.Map<ClienteDto>(clienteExist), _mapper.Map<List<DetalleVentaDto>>(productosDetalleVenta), ventaDto.Plazos);
 
                 if (!isXmlGenerated.IsSuccess)
                 {
@@ -1245,52 +965,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     return _response;
                 }
 
-                /*//RutasFacturacionDto rutaXmlDto = new()
-                //{
-                //    RutaFirmados = null,
-                //    RutaAutorizados = null,
-                //    RutaGenerados = isXmlGenerated.PathXML,
-                //    ClaveAcceso = comprobanteConDocSri!.DocSri,
-                //    IdEmpresa = comprobanteConDocSri.IdEmpresa,
-                //    PathXMLPDF = null,
-                //    EstadoRecepcion = null,
-                //};
-
-                //await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaXmlDto);*/
-
-                // Se coloco de manera provisional este paso para observar como se genera la factura en pdf pero esto se realiza en el paso 7
-                // var generarFacturaPdf = await GenerarRideYPdf(comprobanteTransaccion); // Aqui se debe ver que funcione cuando ya se tenga la firma del documento xml porque solo es para probar esta seccion
-                var generarFacturaPdf = await GenerarRideYPdf(comprobanteTransaccion, isXmlGenerated.PathXML);
-
-                // Se coloco de manero provisional este paso para observar el envio de la factura y el archivo xml por correo. Este paso seria el 8.
-                var emailResponse = await EnviarFactura(comprobanteTransaccion.Id);
-
-                if (!emailResponse.IsSuccess)
-                {
-                    _response.IsSuccess = false;
-                    _response.Message = emailResponse.Message;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-
-                    return _response;
-                }
-
-                // 4. Se firma el archivo (factura) xml
-                var rutaXmlGenerado = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso, tracked: false, includeProperties: "Empresa");
-
-                if (rutaXmlGenerado == null)
-                {
-                    await transaccion.RollbackAsync();
-
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Message = "No se encontro el archivo xml generado. Intentelo nuevamente.";
-                    _response.Result = null;
-
-                    return _response;
-                }
-
-                var firmaResponse = _serviceSRI.FirmarXML(_mapper.Map<RutasFacturacionDto>(rutaXmlGenerado));
-
+                // 5. Se firma el archivo xml
+                var firmaResponse = _serviceSRI.FirmarXML(_mapper.Map<EmpresaDto>(empresaExist), comprobanteConDocSri.DocSri, isXmlGenerated.PathXML);
                 if (!firmaResponse.IsSuccess)
                 {
                     await transaccion.RollbackAsync();
@@ -1303,143 +979,116 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     return _response;
                 }
 
-                var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso, tracked: false);
+                // 6. Se realiza la recepcion del documento firmado en el sri
+                var responseRecepcion = _serviceSRI.RecepcionSRI(firmaResponse.RutaXmlFirmado, comprobanteConDocSri.DocSri);
 
-                RutasFacturacionDto rutaConFirma = new()
+                if (!responseRecepcion.Estado.Equals("RECIBIDA"))
                 {
-                    Id = rutaXmlDb.Id,
-                    IdEmpresa = rutaXmlDb.IdEmpresa,
-                    ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                    RutaGenerados = rutaXmlDb.RutaGenerados,
-                    RutaFirmados = firmaResponse.RutaXmlFirmado,
-                    RutaAutorizados = null,
-                    EstadoRecepcion = null,
-                    PathXMLPDF = null,
-                };
-
-                // Se actualiza la ruta con el xml firmado
-                await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaConFirma);
-
-                // await _db.TblRutasXML.AddAsync(_mapper.Map<TblRutasXML>(rutaConFirma));
-                // await _db.SaveChangesAsync();
-                transaccion.Commit();
-
-                // En este try catch no se realiza el rollback de la base de datos, es decir se almacenan los datos en la base de datos para luego poder corregirlos
-                try
-                {
-                    // 5. Se realiza el proceso de recepcion
-                    var rutaXmlFirmado = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == claveAcceso, tracked: false);
-
-                    // var responseRecepcion = await _serviceSRI.RecepcionSRI(claveAcceso, empresaExist.Ruc);
-                    var responseRecepcion = _serviceSRI.RecepcionSRI(_mapper.Map<RutasFacturacionDto>(rutaXmlFirmado));
-
-                    if (!responseRecepcion.Estado.Equals("RECIBIDA"))
+                    RutasFacturacionDto rutaNoRecibida = new()
                     {
-                        RutasFacturacionDto rutaNoRecibida = new()
-                        {
-                            Id = rutaXmlDb.Id,
-                            IdEmpresa = rutaXmlDb.IdEmpresa,
-                            ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                            EstadoRecepcion = responseRecepcion.Estado,
-                            PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                            RutaGenerados = rutaXmlDb.RutaGenerados,
-                            RutaFirmados = rutaXmlDb.RutaFirmados,
-                            RutaAutorizados = rutaXmlDb.RutaAutorizados,
-                        };
-
-                        await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaNoRecibida);
-
-                        _response.IsSuccess = false;
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.Message = $"La factura no ha sido recibida en el SRI. El error esta en: {responseRecepcion.Estado}";
-                        _response.Result = null;
-
-                        return _response;
-                    }
-
-                    RutasFacturacionDto rutaRecibida = new()
-                    {
-                        Id = rutaXmlDb.Id,
-                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
+                        IdEmpresa = empresaExist.Id,
+                        ClaveAcceso = comprobanteConDocSri.DocSri,
                         EstadoRecepcion = responseRecepcion.Estado,
-                        PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                        RutaFirmados = rutaXmlDb.RutaFirmados,
-                        RutaAutorizados = rutaXmlDb.RutaAutorizados,
+                        PathXMLPDF = null,
+                        RutaGenerados = firmaResponse.RutaXmlGenerado,
+                        RutaFirmados = firmaResponse.RutaXmlFirmado,
+                        RutaAutorizados = null,
                     };
 
-                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaRecibida);
+                    await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaNoRecibida);
 
-                    // 6. Se realiza el proceso de autorizacion
-                    // var responseAutorizacion = await _serviceSRI.AutorizacionSRI(claveAcceso, empresaExist.Ruc);
-                    var responseAutorizacion = _serviceSRI.AutorizacionSRI(_mapper.Map<RutasFacturacionDto>(rutaXmlFirmado));
+                    await transaccion.CommitAsync();
 
-                    if (!responseAutorizacion.Estado.Equals("AUTORIZADO"))
-                    {
-                        RutasFacturacionDto rutaNoAutorizada = new()
-                        {
-                            Id = rutaXmlDb.Id,
-                            IdEmpresa = rutaXmlDb.IdEmpresa,
-                            ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                            EstadoRecepcion = responseAutorizacion.Estado,
-                            PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                            RutaGenerados = rutaXmlDb.RutaGenerados,
-                            RutaFirmados = rutaXmlDb.RutaFirmados,
-                            RutaAutorizados = responseAutorizacion.PathXMLAutorizado,
-                        };
-
-                        await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaNoAutorizada);
-
-                        _response.IsSuccess = false;
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.Message = $"La factura no ha sido autorizada en el SRI. El error esta en: {responseRecepcion.Estado}";
-                        _response.Result = null;
-
-                        return _response;
-                    }
-
-                    RutasFacturacionDto rutaAutorizada = new()
-                    {
-                        Id = rutaXmlDb.Id,
-                        IdEmpresa = rutaXmlDb.IdEmpresa,
-                        ClaveAcceso = rutaXmlDb.ClaveAcceso,
-                        EstadoRecepcion = responseAutorizacion.Estado,
-                        PathXMLPDF = rutaXmlDb.PathXMLPDF,
-                        RutaGenerados = rutaXmlDb.RutaGenerados,
-                        RutaFirmados = rutaXmlDb.RutaFirmados,
-                        RutaAutorizados = responseAutorizacion.PathXMLAutorizado,
-                    };
-
-                    await _rutasFacturacionRepository.UpdateRutasFacturacionAsync(rutaXmlDb.Id, rutaAutorizada);
-
-                    _response.IsSuccess = true;
-                    _response.StatusCode = HttpStatusCode.OK;
-                    _response.Message = "Se ha generado la factura electronica con exito.";
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Message = $"La factura no ha sido recibida en el SRI. El error esta en: {responseRecepcion.Estado}";
                     _response.Result = null;
 
                     return _response;
-
-                    // 7. Se envia la factura electronica
-                    // var generarFacturaPdf = await GenerarRideYPdf(comprobanteConDocSri.Id);
                 }
-                catch (Exception ex)
+
+                // 7. Se realiza la autorizacion del documento en el sri
+                var responseAutorizacion = _serviceSRI.AutorizacionSRI(_mapper.Map<EmpresaDto>(empresaExist), comprobanteConDocSri.DocSri);
+
+                if (!responseAutorizacion.Estado.Equals("AUTORIZADO"))
                 {
+                    // Se registra las rutas de los archivos generados , firmados y no autorizados
+                    RutasFacturacionDto rutaNoAutorizada = new()
+                    {
+                        IdEmpresa = empresaExist.Id,
+                        ClaveAcceso = comprobanteConDocSri.DocSri,
+                        EstadoRecepcion = responseAutorizacion.Estado,
+                        PathXMLPDF = null,
+                        RutaGenerados = firmaResponse.RutaXmlGenerado,
+                        RutaFirmados = firmaResponse.RutaXmlFirmado,
+                        RutaAutorizados = responseAutorizacion.PathXMLAutorizado,
+                    };
+
+                    await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaNoAutorizada);
+
+                    await transaccion.CommitAsync();
+
                     _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.InternalServerError;
-                    _response.Message = $"Ha ocurrido un error. Error: {ex.Message}";
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Message = $"La factura no ha sido autorizada en el SRI. El error esta en: {responseRecepcion.Estado}";
+                    _response.Result = null;
 
                     return _response;
                 }
+
+                // 8. Se genera el RIDE y PDF
+                var generarFacturaPdf = await GenerarRideYPdf(comprobanteTransaccion, isXmlGenerated.PathXML, ventaDto.Plazos);
+                if (!generarFacturaPdf.IsSuccess)
+                {
+                    _response.Message = generarFacturaPdf.Message;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = generarFacturaPdf.IsSuccess;
+                    _response.Result = null;
+
+                    return _response;
+                }
+
+                // 9. Se guardan la rutas de los archivos generados, firmados, y autorizados
+                RutasFacturacionDto rutaAutorizada = new()
+                {
+                    IdEmpresa = empresaExist.Id,
+                    ClaveAcceso = comprobanteConDocSri.DocSri,
+                    EstadoRecepcion = responseAutorizacion.Estado,
+                    PathXMLPDF = (string)generarFacturaPdf.Result,
+                    RutaGenerados = firmaResponse.RutaXmlGenerado,
+                    RutaFirmados = firmaResponse.RutaXmlFirmado,
+                    RutaAutorizados = responseAutorizacion.PathXMLAutorizado,
+                };
+
+                await _rutasFacturacionRepository.CreateRutasFacturacionAsync(rutaAutorizada);
+
+                await transaccion.CommitAsync();
+
+                // 10. Se envía la factura al cliente por correo electrónico
+                var emailResponse = await EnviarFactura(comprobanteTransaccion.Id);
+
+                if (!emailResponse.IsSuccess)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Message = emailResponse.Message;
+                    _response.Result = null;
+
+                    return _response;
+                }
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Message = "Se ha generado la factura electrónica con éxito.";
+                _response.Result = null;
+
+                return _response;
             }
             catch (Exception ex)
             {
-                await transaccion.RollbackAsync();
-
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 _response.Message = $"Ha ocurrido un error. Error: {ex.Message}";
-                _response.Result = null;
 
                 return _response;
             }
@@ -1650,7 +1299,6 @@ namespace FacturacionElectronicaSRI.Repository.Service
         {
             try
             {
-
                 var comprobanteDb = await _comprobanteVentaRepository.GetAsync(u => u.Id == comprobanteId, tracked: false, includeProperties: "Empresa,Cliente");
 
                 if (comprobanteDb == null)
@@ -1664,7 +1312,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
                 var rutaXmlDb = await _rutasFacturacionRepository.GetAsync(u => u.ClaveAcceso == comprobanteDb.DocSri, tracked: false);
 
-                if (rutaXmlDb == null)
+                if (rutaXmlDb == null || (string.IsNullOrEmpty(rutaXmlDb.RutaGenerados) && string.IsNullOrEmpty(rutaXmlDb.PathXMLPDF)))
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -1673,20 +1321,12 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     return _response;
                 }
 
-                if (!string.IsNullOrEmpty(rutaXmlDb.RutaGenerados) && !string.IsNullOrEmpty(rutaXmlDb.PathXMLPDF))
-                {
-                    var message = new Message([comprobanteDb.Cliente!.Email], "Es una prueba del correo", "Si lees esto, es porque salio bien =)", [rutaXmlDb.RutaGenerados, rutaXmlDb.PathXMLPDF]);
-                    _emailService.SendEmail(message);
-                }
-                else
-                {
-                    var message = new Message([comprobanteDb.Cliente!.Email], "Es una prueba del correo", "Si lees esto, es porque salio bien =)");
-                    _emailService.SendEmail(message);
-                }
+                var message = new Message([comprobanteDb.Cliente!.Email], "Es una prueba del correo", "Si lees esto, es porque salió bien =)", [rutaXmlDb.RutaAutorizados!, rutaXmlDb.PathXMLPDF!]);
+                _emailService.SendEmail(message);
 
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.Message = $"Se enviar el mensaje.";
+                _response.Message = $"Se envío el mensaje.";
 
                 return _response;
             }

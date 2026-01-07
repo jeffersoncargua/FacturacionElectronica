@@ -1,0 +1,85 @@
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>Guardiana </razonSocial>
+    <nombreComercial>GuardianiaCP</nombreComercial>
+    <ruc>1707996904001</ruc>
+    <claveAcceso>1012202519170799690400110010010000000010303215011</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>001</ptoEmi>
+    <secuencial>000000001</secuencial>
+    <dirMatriz>De los Nogales</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>10/12/2025</fechaEmision>
+    <dirEstablecimiento>De los Nogales</dirEstablecimiento>
+    <obligadoContabilidad>No</obligadoContabilidad>
+    <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+    <razonSocialComprador>Jeff Cargua</razonSocialComprador>
+    <identificacionComprador>1721166203</identificacionComprador>
+    <totalSinImpuestos>266,75</totalSinImpuestos>
+    <totalDescuento>0,00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>4</codigoPorcentaje>
+        <baseImponible>266,75</baseImponible>
+        <valor>40,01</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0.00</propina>
+    <importeTotal>306,76</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>19</formaPago>
+        <total>306.76</total>
+        <plazo>6</plazo>
+        <unidadTiempo>meses</unidadTiempo>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>ECU-C001</codigoPrincipal>
+      <codigoAuxiliar>ECU-C001</codigoAuxiliar>
+      <descripcion>Chompa Purpura</descripcion>
+      <cantidad>10,00</cantidad>
+      <precioUnitario>12,50</precioUnitario>
+      <descuento>0,00</descuento>
+      <precioTotalSinImpuesto>125</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>125</baseImponible>
+          <valor>18.75</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>ECU-C002</codigoPrincipal>
+      <codigoAuxiliar>ECU-C002</codigoAuxiliar>
+      <descripcion>Chompa Negra</descripcion>
+      <cantidad>9,00</cantidad>
+      <precioUnitario>15,75</precioUnitario>
+      <descuento>0,00</descuento>
+      <precioTotalSinImpuesto>141.75</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>141.75</baseImponible>
+          <valor>21.26</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Email">jeffersoncargua@gmail.com</campoAdicional>
+  </infoAdicional>
+</factura>

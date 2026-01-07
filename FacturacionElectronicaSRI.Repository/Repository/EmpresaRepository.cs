@@ -5,6 +5,7 @@ using FacturacionElectronicaSRI.Data.Model.Empresa.DTO;
 using FacturacionElectronicaSRI.Repository.Repository.IRepository;
 using Microsoft.AspNetCore.Hosting;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FacturacionElectronicaSRI.Repository.Repository
 {
@@ -93,12 +94,12 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                             Directory.CreateDirectory(carpetaCertificados);
                         }
 
-                        using (var fileStreamCertificado = new FileStream(Path.Combine(carpetaCertificados, empresaDto.Ruc + extensionCertificado), FileMode.Create))
+                        using (var fileStreamCertificado = new FileStream(Path.Combine(carpetaCertificados, empresaDto.Ruc + extensionCertificado), FileMode.Create, FileAccess.ReadWrite))
                         {
-                            empresaDto.CertificadoEmpresa.CopyTo(fileStreamCertificado);
+                            await empresaDto.CertificadoEmpresa.CopyToAsync(fileStreamCertificado);
                         }
 
-                        rutaCertificado = rutaCarpeta + @"\CertificadoP12\" + empresaDto.Ruc + extensionCertificado;
+                        rutaCertificado = rutaCarpeta + @"\CertificadosP12\" + empresaDto.Ruc + extensionCertificado;
                     }
 
                     TblEmpresa empresa = new()
@@ -205,6 +206,16 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 if (empresaDb != null)
                 {
                     await this.DeleteAsync(empresaDb);
+
+                    if (File.Exists(empresaDb.PathLogo))
+                    {
+                        File.Delete(empresaDb.PathLogo);
+                    }
+
+                    if (File.Exists(empresaDb.PathCertificado))
+                    {
+                        File.Delete(empresaDb.PathCertificado);
+                    }
 
                     _response.IsSuccess = true;
                     _response.Message = "Se eliminó el registro correctamente.";

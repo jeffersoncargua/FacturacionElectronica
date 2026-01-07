@@ -22,6 +22,7 @@ namespace Facturacion_Electronica.Mapping
             CreateMap<TblComprobanteVenta, ComprobanteVentaDto>().ReverseMap();
             CreateMap<TblDetalleVenta, DetalleVentaDto>().ReverseMap();
             CreateMap<TblRutasXML, RutasFacturacionDto>().ReverseMap();
+            CreateMap<TblKushkiPayment, ResponseKushkiPayment>().ReverseMap();
             CreateMap<ApiResponse, Response>().ReverseMap();
         }
     }

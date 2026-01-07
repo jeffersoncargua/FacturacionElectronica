@@ -157,6 +157,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                         Descuento = detalleVentaDto.Descuento,
                         VentaIva = detalleVentaDto.VentaIva,
                         Total = detalleVentaDto.Total,
+                        Detalle = detalleVentaDto.Detalle,
                     };
 
                     _db.TblDetalleVenta.Update(detalleVentaUpdated);

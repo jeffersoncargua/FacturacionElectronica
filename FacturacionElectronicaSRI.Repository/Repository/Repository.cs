@@ -29,7 +29,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
             await SaveAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, int pageSize = 0, int pageNumber = 0)
         {
             IQueryable<T> queryable = dbSet;
             if (filter != null)
@@ -43,6 +43,16 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                 {
                     queryable = queryable.Include(includeProp);
                 }
+            }
+
+            if (pageSize > 0)
+            {
+                if (pageSize > 20)
+                {
+                    pageSize = 20;
+                }
+
+                queryable = queryable.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             }
 
             return await queryable.ToListAsync();

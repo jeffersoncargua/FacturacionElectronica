@@ -1,0 +1,65 @@
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>Servicios de Programación </razonSocial>
+    <nombreComercial>Programacion</nombreComercial>
+    <ruc>1721166203001</ruc>
+    <claveAcceso>0601202601172116620300110010010000001430450845411</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>001</ptoEmi>
+    <secuencial>000000143</secuencial>
+    <dirMatriz>De las Frutillas y Madreselvas</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>06/01/2026</fechaEmision>
+    <dirEstablecimiento>De las Frutillas y Madreselvas</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+    <razonSocialComprador>Jeff Cargua</razonSocialComprador>
+    <identificacionComprador>1721166203</identificacionComprador>
+    <totalSinImpuestos>50.00</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>4</codigoPorcentaje>
+        <baseImponible>50.00</baseImponible>
+        <valor>7.50</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0.00</propina>
+    <importeTotal>57.50</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>16</formaPago>
+        <total>57.50</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>ECU-C001</codigoPrincipal>
+      <codigoAuxiliar>ECU-C001</codigoAuxiliar>
+      <descripcion>Chompa Purpura</descripcion>
+      <cantidad>4.00</cantidad>
+      <precioUnitario>12.50</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>50.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>50.00</baseImponible>
+          <valor>7.50</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Email">jeffersoncargua@gmail.com</campoAdicional>
+  </infoAdicional>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="Signature-d9d584ed-65f4-46e1-843e-7b6e3c964bb7"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" /><ds:Reference Id="Reference-59097b6e-6c93-41cb-8dfa-1deb6637b804" URI="#comprobante"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><ds:DigestValue>3kR2j18xso4aRHSQMJF9YbUlfkx3j2WqDEK0ZsJhpi4=</ds:DigestValue></ds:Reference><ds:Reference Id="ReferenceKeyInfo" URI="#KeyInfoId-Signature-d9d584ed-65f4-46e1-843e-7b6e3c964bb7"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><ds:DigestValue>84IU2b9AS+EHAjBTXk0ZAOBonN1vY3e0dndyMo+Uy9Y=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#SignedProperties-Signature-d9d584ed-65f4-46e1-843e-7b6e3c964bb7"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><ds:DigestValue>kOohz03/YA3/OHyOWkhqdVnV20073vrPS+dD4Ew45JI=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="SignatureValue-d9d584ed-65f4-46e1-843e-7b6e3c964bb7">SPrzkgC0lMSRDTNF8vyraDI/9WPse63J7ZjBTk3tH9Ae1yML5/dumZ853pwVXZp3oB8mzy/I6TkXysJL+6Mq37veDkruzqLz1K4xzwOVpeczBTVbJ+SaSqdPIYXCh/q+6Aef1SfxydK04jTfOKaVS3r3vPgkOVoTpGOVm0tBSKVLFnA3+95+IqWznNXJfsA+VhzNCcXUx8n4TU6HNKrst1XDtXRUm0X2WdCDK0TezQleVA8ZaRtloasJ3OA2JfKEB7Tb4GsDqzNzhD8EKGxfQFgKu50U1hzEOZYjrJ82eKPtORh917J+Q3VYAYjD/RQXe4OjKXaka00xodpmVwi0vA==</ds:SignatureValue><ds:KeyInfo Id="KeyInfoId-Signature-d9d584ed-65f4-46e1-843e-7b6e3c964bb7"><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data><ds:KeyValue><ds:RSAKeyValue><ds:Modulus>opdpEbBebELKYIEN6ys8zZNM90B8Lsc5FGxtfrfwMd7X/LFm4gkVnufcjIU64akR1SOuXb//UgAcVa5+oCvhAUuNteLnnvZ043aiCIFDJD1KtVwRHVQ0b029yY0Nysq0QYqjKQQcuvzEZEglUYKB33ycNzGaFaBFBRfV69KzZQ6/zgT2DEcerKeCkbXMblH3o8+xSUULIyYx3C26xdeXqkrM6MHcLQnjH8d/Sfb7Ze1w0CPVxsrA5heKlscSd1SRfQV+hvLIZCBaRmpVGzjljGkOgsUsY4+0F9s71KhrnmYWLZMWtxl0fXM+FIxGHR/1l7e6U0EEa/JAi8jN39FgQQ==</ds:Modulus><ds:Exponent>AQAB</ds:Exponent></ds:RSAKeyValue></ds:KeyValue></ds:KeyInfo><ds:Object Id="XadesObjectId-c3888dd0-0aa1-4f44-814f-a71b74ec2ca0"><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="QualifyingProperties-8e7b00dd-9045-40b1-8ba1-a5ca50e17aad" Target="#Signature-d9d584ed-65f4-46e1-843e-7b6e3c964bb7"><xades:SignedProperties Id="SignedProperties-Signature-d9d584ed-65f4-46e1-843e-7b6e3c964bb7"><xades:SignedSignatureProperties><xades:SigningTime>2026-01-06T16:18:27-05:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><ds:DigestValue>wa7/JnEdZdVoESUgd2091V9vQ2aqvLdnDtnuBzSU3YI=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1EF CORPNEWBEST, OU=ENTIDAD DE CERTIFICACION DE INFORMACION, O=CORPNEWBEST CIA. LTDA., C=EC</ds:X509IssuerName><ds:X509SerialNumber>425569013766422149770246</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#Reference-59097b6e-6c93-41cb-8dfa-1deb6637b804"><xades:MimeType>text/xml</xades:MimeType><xades:Encoding>UTF-8</xades:Encoding></xades:DataObjectFormat><xades:CommitmentTypeIndication><xades:CommitmentTypeId><xades:Identifier>http://uri.etsi.org/01903/v1.2.2#ProofOfOrigin</xades:Identifier><xades:Description /></xades:CommitmentTypeId><xades:AllSignedDataObjects /></xades:CommitmentTypeIndication></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></factura>

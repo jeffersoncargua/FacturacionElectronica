@@ -1,0 +1,103 @@
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>Servicios de Programacion</razonSocial>
+    <nombreComercial>Programacion</nombreComercial>
+    <ruc>1721166203001</ruc>
+    <claveAcceso>3012202519172116620300110010010000000010154481211</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>001</ptoEmi>
+    <secuencial>000000001</secuencial>
+    <dirMatriz>De las Frutillas y Madreselvas E12-155</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>30/12/2025</fechaEmision>
+    <dirEstablecimiento>De las Frutillas y Madreselvas E12-155</dirEstablecimiento>
+    <obligadoContabilidad>No</obligadoContabilidad>
+    <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+    <razonSocialComprador>Jeff Cargua</razonSocialComprador>
+    <identificacionComprador>1721166203</identificacionComprador>
+    <totalSinImpuestos>70,00</totalSinImpuestos>
+    <totalDescuento>4,00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>4</codigoPorcentaje>
+        <baseImponible>70,00</baseImponible>
+        <valor>10,51</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0.00</propina>
+    <importeTotal>80,51</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>19</formaPago>
+        <total>80.51</total>
+        <plazo>3</plazo>
+        <unidadTiempo>meses</unidadTiempo>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>ECU-C001</codigoPrincipal>
+      <codigoAuxiliar>ECU-C001</codigoAuxiliar>
+      <descripcion>Chompa Purpura</descripcion>
+      <cantidad>2,00</cantidad>
+      <precioUnitario>12,50</precioUnitario>
+      <descuento>0,00</descuento>
+      <precioTotalSinImpuesto>25.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>25.00</baseImponible>
+          <valor>3.75</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>ECU-C003</codigoPrincipal>
+      <codigoAuxiliar>ECU-C003</codigoAuxiliar>
+      <descripcion>Chompa Oscura</descripcion>
+      <cantidad>2,00</cantidad>
+      <precioUnitario>13,75</precioUnitario>
+      <descuento>2,00</descuento>
+      <precioTotalSinImpuesto>25.50</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>25.50</baseImponible>
+          <valor>3.83</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>ECU-C004</codigoPrincipal>
+      <codigoAuxiliar>ECU-C004</codigoAuxiliar>
+      <descripcion>Chompa  Death Pool</descripcion>
+      <cantidad>2,00</cantidad>
+      <precioUnitario>10,75</precioUnitario>
+      <descuento>2,00</descuento>
+      <precioTotalSinImpuesto>19.50</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>19.50</baseImponible>
+          <valor>2.93</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Email">jeffersoncargua@gmail.com</campoAdicional>
+  </infoAdicional>
+</factura>

@@ -3,6 +3,7 @@ using FirmaXadesNetCore;
 using FirmaXadesNetCore.Crypto;
 using FirmaXadesNetCore.Signature;
 using FirmaXadesNetCore.Signature.Parameters;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using org.bouncycastle.util;
 using System.Security.Cryptography.X509Certificates;
@@ -13,10 +14,12 @@ namespace FacturacionElectronicaSRI.Repository.Service
     public class CertificadoService : ICertificadoService
     {
         internal X509Certificate2 _x509Certificate2;
+        private readonly IHostingEnvironment _webhostingEnvironment;
         private readonly ILogger<CertificadoService> _logger;
-        public CertificadoService(ILogger<CertificadoService> logger)
+        public CertificadoService(ILogger<CertificadoService> logger, IHostingEnvironment webhostingEnvironment)
         {
             _logger = logger;
+            _webhostingEnvironment = webhostingEnvironment;
         }
 
         public void CargarDesdeAlmacen(Store storename, StoreLocation storeLocation, string friendlyName)
@@ -35,18 +38,22 @@ namespace FacturacionElectronicaSRI.Repository.Service
 
             try
             {
-                if (File.Exists(rutaCertificado))
+                string rutaCarpeta = _webhostingEnvironment.ContentRootPath + "\\Archivos";
+
+                var archivoCertificado = Path.Combine(rutaCarpeta, rutaCertificado.TrimStart('\\'));
+
+                if (File.Exists(archivoCertificado))
                 {
                     Console.WriteLine("Si existe");
 
                     using X509Store store = new("My", StoreLocation.CurrentUser);
 
-                    _x509Certificate2 = new X509Certificate2(File.ReadAllBytes(rutaCertificado), contrasena, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
+                    _x509Certificate2 = new X509Certificate2(File.ReadAllBytes(archivoCertificado), contrasena, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
 
                     _logger.LogDebug("Certificado cargado");
                 }
 
-                throw new Exception("No existe el ceritificado P12");
+                // throw new Exception("No existe el ceritificado P12");
             }
             catch (Exception ex)
             {
@@ -74,8 +81,10 @@ namespace FacturacionElectronicaSRI.Repository.Service
             var xadesService = new XadesService();
             var parameters = new SignatureParameters()
             {
-                SignatureMethod = SignatureMethod.RSAwithSHA1,
-                DigestMethod = DigestMethod.SHA1,
+                // SignatureMethod = SignatureMethod.RSAwithSHA1,
+                SignatureMethod = SignatureMethod.RSAwithSHA256,
+                // DigestMethod = DigestMethod.SHA1,
+                DigestMethod = DigestMethod.SHA256,
                 SigningDate = new DateTime?(DateTime.Now),
             };
 
