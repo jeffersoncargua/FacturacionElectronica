@@ -1,0 +1,65 @@
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>Servicios de Programación </razonSocial>
+    <nombreComercial>Programacion</nombreComercial>
+    <ruc>1721166203001</ruc>
+    <claveAcceso>0801202601172116620300110010010000001760824528811</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>001</ptoEmi>
+    <secuencial>000000176</secuencial>
+    <dirMatriz>De las Frutillas y Madreselvas</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>08/01/2026</fechaEmision>
+    <dirEstablecimiento>De las Frutillas y Madreselvas</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+    <razonSocialComprador>Jeff Cargua</razonSocialComprador>
+    <identificacionComprador>1721166203</identificacionComprador>
+    <totalSinImpuestos>15.30</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>4</codigoPorcentaje>
+        <baseImponible>15.30</baseImponible>
+        <valor>2.29</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0.00</propina>
+    <importeTotal>17.59</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>16</formaPago>
+        <total>17.59</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>ECU-MAS</codigoPrincipal>
+      <codigoAuxiliar>ECU-MAS</codigoAuxiliar>
+      <descripcion>Máscara para Niños Spiderman</descripcion>
+      <cantidad>18.00</cantidad>
+      <precioUnitario>0.85</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>15.30</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15.00</tarifa>
+          <baseImponible>15.30</baseImponible>
+          <valor>2.29</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Email">jeffersoncargua@gmail.com</campoAdicional>
+  </infoAdicional>
+</factura>

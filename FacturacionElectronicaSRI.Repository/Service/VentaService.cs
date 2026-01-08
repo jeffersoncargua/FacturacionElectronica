@@ -979,7 +979,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 }
 
                 // 6. Se realiza la recepcion del documento firmado en el sri
-                var responseRecepcion = _serviceSRI.RecepcionSRI(firmaResponse.RutaXmlFirmado, comprobanteConDocSri.DocSri);
+                // var responseRecepcion = _serviceSRI.RecepcionSRI(firmaResponse.RutaXmlFirmado, comprobanteConDocSri.DocSri);
+                var responseRecepcion = await _serviceSRI.RecepcionSRI(firmaResponse.RutaXmlFirmado, comprobanteConDocSri.DocSri);
 
                 if (!responseRecepcion.Estado.Equals("RECIBIDA"))
                 {
@@ -1007,7 +1008,8 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 }
 
                 // 7. Se realiza la autorizacion del documento en el sri
-                var responseAutorizacion = _serviceSRI.AutorizacionSRI(_mapper.Map<EmpresaDto>(empresaExist), comprobanteConDocSri.DocSri);
+                // var responseAutorizacion = _serviceSRI.AutorizacionSRI(_mapper.Map<EmpresaDto>(empresaExist), comprobanteConDocSri.DocSri);
+                var responseAutorizacion = await _serviceSRI.AutorizacionSRI(_mapper.Map<EmpresaDto>(empresaExist), comprobanteConDocSri.DocSri);
 
                 if (!responseAutorizacion.Estado.Equals("AUTORIZADO"))
                 {
@@ -1088,6 +1090,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 _response.Message = $"Ha ocurrido un error. Error: {ex.Message}";
+                _response.Result = null;
 
                 return _response;
             }

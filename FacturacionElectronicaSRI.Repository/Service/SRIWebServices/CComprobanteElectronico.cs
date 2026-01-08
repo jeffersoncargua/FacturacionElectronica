@@ -2,13 +2,37 @@
 {
     public class CComprobanteElectronico
     {
-        public CRespuestaRecepcion RecepcionComprobantePrueba(string path)
+        //public CRespuestaRecepcion RecepcionComprobantePrueba(string path)
+        //{
+        //    var mensaje = string.Empty;
+        //    var xmlByte = File.ReadAllBytes(path);
+        //    CSRIws sri = new ();
+
+        //    CRespuestaRecepcion resRecepcion = sri.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
+
+        //    if (resRecepcion.Estado!.Equals("DEVUELTA"))
+        //    {
+        //        foreach (var comprobanteRecepcion in resRecepcion.Comprobantes!)
+        //        {
+        //            foreach (var mensajeComprobante in comprobanteRecepcion.Mensajes!)
+        //            {
+        //                mensaje = mensajeComprobante.mensaje;
+        //                mensaje = mensajeComprobante.InformacionAdicional;
+        //                mensaje = mensajeComprobante.Identificador;
+        //                mensaje = mensajeComprobante.Tipo;
+        //            }
+        //        }
+        //    }
+
+        //    return resRecepcion;
+        //}
+        public async Task<CRespuestaRecepcion> RecepcionComprobantePrueba(string path)
         {
             var mensaje = string.Empty;
             var xmlByte = File.ReadAllBytes(path);
-            CSRIws sri = new ();
+            CSRIws sri = new();
 
-            CRespuestaRecepcion resRecepcion = sri.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
+            CRespuestaRecepcion resRecepcion = await sri.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
 
             if (resRecepcion.Estado!.Equals("DEVUELTA"))
             {
@@ -27,10 +51,16 @@
             return resRecepcion;
         }
 
-        public CRespuestaAutorizacion AutorizacionComprobantePrueba(string claveAcceso)
+        //public CRespuestaAutorizacion AutorizacionComprobantePrueba(string claveAcceso)
+        //{
+        //    CSRIws sri = new ();
+        //    CRespuestaAutorizacion resAutorizacion = sri.AutorizacionComprobanteOnLinePrueba(claveAcceso);
+        //    return resAutorizacion;
+        //}
+        public async Task<CRespuestaAutorizacion> AutorizacionComprobantePrueba(string claveAcceso)
         {
-            CSRIws sri = new ();
-            CRespuestaAutorizacion resAutorizacion = sri.AutorizacionComprobanteOnLinePrueba(claveAcceso);
+            CSRIws sri = new();
+            CRespuestaAutorizacion resAutorizacion = await sri.AutorizacionComprobanteOnLinePrueba(claveAcceso);
             return resAutorizacion;
         }
     }

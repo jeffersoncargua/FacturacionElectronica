@@ -41,9 +41,15 @@ namespace FacturacionElectronicaSRI.Repository.Service
         /// </summary>
         /// <param name="claveAcceso">Es el parametro que se va a utilizar en la solictud de la autorizacion del xml firmado para la facturacion electronica.</param>
         /// <returns>Retorna la respuesta de la solicitud de autorizacion del sri que puede ser "AUTORIZADO" de estar correctamente el proceso, caso contrario recibirimos el mensaje de error.</returns>
-        public CRespuestaAutorizacion AutorizacionComprobante(string claveAcceso)
+        //public CRespuestaAutorizacion AutorizacionComprobante(string claveAcceso)
+        //{
+        //    CRespuestaAutorizacion respuestaAutorizacion = _cSriWebService.AutorizacionComprobanteOnLinePrueba(claveAcceso);
+
+        //    return respuestaAutorizacion;
+        //}
+        public async Task<CRespuestaAutorizacion> AutorizacionComprobante(string claveAcceso)
         {
-            CRespuestaAutorizacion respuestaAutorizacion = _cSriWebService.AutorizacionComprobanteOnLinePrueba(claveAcceso);
+            CRespuestaAutorizacion respuestaAutorizacion = await _cSriWebService.AutorizacionComprobanteOnLinePrueba(claveAcceso);
 
             return respuestaAutorizacion;
         }
@@ -55,7 +61,87 @@ namespace FacturacionElectronicaSRI.Repository.Service
         /// <param name="empresaDto">permite obtener la informacion  de la empresa, necesaria para la autorización del SRI.</param>
         /// <param name="claveAcceso">permite obtener la informacion de la clave de acceso para la autorización del SRI.</param>
         /// <returns>Retorna la respuesta de la autorización del SRI que puede ser: No Autorizada o Autorizada.</returns>
-        public ResponseAutorizacionSRI AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso)
+        //public ResponseAutorizacionSRI AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso)
+        //{
+        //    string carpetaFacturaElectronicaEmpresa = Path.Combine(_webHostEnvironment.ContentRootPath, @"Archivos", @"FacturacionElectronicaEmpresa-" + empresaDto.Ruc);
+
+        //    // Esta funcion permite generar la carpeta de las facturas en el caso de que no exista.
+        //    if (!Directory.Exists(carpetaFacturaElectronicaEmpresa))
+        //    {
+        //        Directory.CreateDirectory(carpetaFacturaElectronicaEmpresa);
+        //    }
+
+        //    string carpetaXMLAutorizado = Path.Combine(carpetaFacturaElectronicaEmpresa, @"DocumentosAutorizados"); // ruta para los xml autorizados
+
+        //    // Esta funcion permite generar la carpeta de los xml autorizados en caso de que no exista
+        //    if (!Directory.Exists(carpetaXMLAutorizado))
+        //    {
+        //        Directory.CreateDirectory(carpetaXMLAutorizado);
+        //    }
+
+        //    string carpetaXMLNoAutorizado = Path.Combine(carpetaFacturaElectronicaEmpresa, @"DocumentosNoAutorizados"); // ruta para los xml no autorizados
+
+        //    // Esta funcion permite generar la carpeta de los xml no autorizados en caso de que no exista
+        //    if (!Directory.Exists(carpetaXMLNoAutorizado))
+        //    {
+        //        Directory.CreateDirectory(carpetaXMLNoAutorizado);
+        //    }
+
+        //    var autorizacion = AutorizacionComprobante(claveAcceso);
+        //    if (autorizacion.Comprobantes![0].Estado!.Equals("EN PROCESO"))
+        //    {
+        //        return new ResponseAutorizacionSRI
+        //        {
+        //            Estado = autorizacion.Estado!,
+        //            ClaveAcceso = claveAcceso,
+        //            Code = 201,
+        //        };
+        //    }
+
+        //    if (autorizacion.Comprobantes![0].Estado!.Equals("AUTORIZADO"))
+        //    {
+        //        // Si esta autorizado se modifica el archivo XML firmado y la ruta del archivo para continuar con el proceso de facturacion electronica.
+        //        var autoriza = XMLAutorizado(
+        //            autorizacion.Comprobantes[0].Comprobante,
+        //            carpetaXMLAutorizado + $@"\autorizacion{autorizacion.ClaveAcceso}" + ".xml",
+        //            autorizacion.Comprobantes[0].Estado,
+        //            autorizacion.ClaveAcceso,
+        //            autorizacion.Comprobantes[0].FechaAutorizacion);
+
+        //        if (autoriza)
+        //        {
+        //            // Se genera la ruta de un xml autorizado por el SRI para almacenarlo en la carpeta de autorizados.
+        //            string rutaXmlAutorizada = carpetaXMLAutorizado + $@"\autorizacion{autorizacion.ClaveAcceso}" + ".xml";
+
+        //            return new ResponseAutorizacionSRI { Estado = autorizacion.Comprobantes![0].Estado!, PathXMLAutorizado = rutaXmlAutorizada };
+        //        }
+
+        //        return new ResponseAutorizacionSRI
+        //        {
+        //            Estado = $"{autorizacion.Comprobantes![0].Mensajes![0].InformacionAdicional?.ToString()} /InformacionAdicional: {autorizacion.Comprobantes![0].Mensajes![0].InformacionAdicional?.ToString()}",
+        //            ClaveAcceso = claveAcceso,
+        //            Code = 500,
+        //        };
+        //    }
+
+        //    // Se genera la ruta de un xml no autorizado por el SRI para almacenarlo en la carpeta de no autorizados.
+        //    string rutaXmlNoAutorizada = carpetaXMLNoAutorizado + $@"\Noautorizada{autorizacion.ClaveAcceso}" + ".xml";
+
+        //    XMLNoAutorizado(
+        //            autorizacion.Comprobantes[0].Comprobante,
+        //            rutaXmlNoAutorizada,
+        //            autorizacion.Comprobantes[0].Estado,
+        //            autorizacion.Comprobantes[0].FechaAutorizacion);
+
+        //    return new ResponseAutorizacionSRI
+        //    {
+        //        Estado = $"{autorizacion.Comprobantes![0].Mensajes![0].InformacionAdicional?.ToString()} /InformacionAdicional: {autorizacion.Comprobantes![0].Mensajes![0].InformacionAdicional?.ToString()}",
+        //        ClaveAcceso = claveAcceso,
+        //        Code = 500,
+        //        PathXMLAutorizado = rutaXmlNoAutorizada,
+        //    };
+        //}
+        public async Task<ResponseAutorizacionSRI> AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso)
         {
             string carpetaFacturaElectronicaEmpresa = Path.Combine(_webHostEnvironment.ContentRootPath, @"Archivos", @"FacturacionElectronicaEmpresa-" + empresaDto.Ruc);
 
@@ -81,7 +167,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 Directory.CreateDirectory(carpetaXMLNoAutorizado);
             }
 
-            var autorizacion = AutorizacionComprobante(claveAcceso);
+            var autorizacion = await AutorizacionComprobante(claveAcceso);
             if (autorizacion.Comprobantes![0].Estado!.Equals("EN PROCESO"))
             {
                 return new ResponseAutorizacionSRI
@@ -418,11 +504,19 @@ namespace FacturacionElectronicaSRI.Repository.Service
         /// </summary>
         /// <param name="path">Es la ruta del xml firmado para continuar con el proceso de facturacion electrónica.</param>
         /// <returns>Retorna la respuesta de la solicitud de recepción del xml firmado que puede "RECIBIDO" o alguna mensaje de error de no hacer sido procesada con exito.</returns>
-        public CRespuestaRecepcion RecepcionComprobante(string path)
+        //public CRespuestaRecepcion RecepcionComprobante(string path)
+        //{
+        //    var xmlByte = File.ReadAllBytes(path);
+
+        //    CRespuestaRecepcion respuestaRecepcion = _cSriWebService.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
+
+        //    return respuestaRecepcion;
+        //}
+        public async Task<CRespuestaRecepcion> RecepcionComprobante(string path)
         {
             var xmlByte = File.ReadAllBytes(path);
 
-            CRespuestaRecepcion respuestaRecepcion = _cSriWebService.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
+            CRespuestaRecepcion respuestaRecepcion = await _cSriWebService.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
 
             return respuestaRecepcion;
         }
@@ -433,7 +527,29 @@ namespace FacturacionElectronicaSRI.Repository.Service
         /// <param name="pathSigned">es la información de la ruta del xml firmado para continuar con la recepción del SRI.</param>
         /// <param name="claveAcceso">contiene la informacion de la clave de acceso necesaria para la recepción del SRI.</param>
         /// <returns>Retorna la respuesta de la operación de Recepcion del SRI que puede ser: DEVUELTA O RECIBIDA.</returns>
-        public ResponseRecepcionSRI RecepcionSRI(string pathSigned, string claveAcceso)
+        //public ResponseRecepcionSRI RecepcionSRI(string pathSigned, string claveAcceso)
+        //{
+        //    // Se obtiene la ruta del xml firmado para continuar con el proceso de facturacion electronica
+        //    if (string.IsNullOrEmpty(pathSigned))
+        //    {
+        //        return new ResponseRecepcionSRI();
+        //    }
+
+        //    var recepcion = RecepcionComprobante(pathSigned);
+
+        //    if (recepcion.Estado!.Equals("RECIBIDA"))
+        //    {
+        //        return new ResponseRecepcionSRI { Estado = recepcion.Estado, ClaveAcceso = claveAcceso };
+        //    }
+
+        //    return new ResponseRecepcionSRI
+        //    {
+        //        Estado = $"{recepcion.Estado} / Mensaje: {recepcion.Comprobantes![0].Mensajes![0].mensaje} / " +
+        //        $"Informacion Adicional: {recepcion.Comprobantes![0].Mensajes![0].InformacionAdicional}",
+        //        ClaveAcceso = claveAcceso,
+        //    };
+        //}
+        public async Task<ResponseRecepcionSRI> RecepcionSRI(string pathSigned, string claveAcceso)
         {
             // Se obtiene la ruta del xml firmado para continuar con el proceso de facturacion electronica
             if (string.IsNullOrEmpty(pathSigned))
@@ -441,7 +557,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 return new ResponseRecepcionSRI();
             }
 
-            var recepcion = RecepcionComprobante(pathSigned);
+            var recepcion = await RecepcionComprobante(pathSigned);
 
             if (recepcion.Estado!.Equals("RECIBIDA"))
             {

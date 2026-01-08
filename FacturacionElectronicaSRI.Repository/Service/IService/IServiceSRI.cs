@@ -11,7 +11,8 @@ namespace FacturacionElectronicaSRI.Repository.Service.IService
 {
     public interface IServiceSRI
     {
-        ResponseAutorizacionSRI AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso);
+        // ResponseAutorizacionSRI AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso);
+        Task<ResponseAutorizacionSRI> AutorizacionSRI(EmpresaDto empresaDto, string claveAcceso);
 
         ViewXmlDto FirmarXML(EmpresaDto empresaDto, string claveAcceso, string pathXmlGenerated);
 
@@ -23,9 +24,11 @@ namespace FacturacionElectronicaSRI.Repository.Service.IService
 
         XmlDocument GetXmlDocument(XDocument document);
 
-        ResponseRecepcionSRI RecepcionSRI(string pathSigned, string claveAcceso);
+        // ResponseRecepcionSRI RecepcionSRI(string pathSigned, string claveAcceso);
+        Task<ResponseRecepcionSRI> RecepcionSRI(string pathSigned, string claveAcceso);
 
-        CRespuestaRecepcion RecepcionComprobante(string path);
+        // CRespuestaRecepcion RecepcionComprobante(string path);
+        Task<CRespuestaRecepcion> RecepcionComprobante(string path);
 
         bool XMLAutorizado(string patchCData, string patchOut, string estadoAutorizado, string numeroAutorizado, string fechaAutorizado);
 
@@ -33,6 +36,7 @@ namespace FacturacionElectronicaSRI.Repository.Service.IService
 
         string SerializarAXML<T>(T objeto);
 
-        CRespuestaAutorizacion AutorizacionComprobante(string claveAcceso);
+        // CRespuestaAutorizacion AutorizacionComprobante(string claveAcceso);
+        Task<CRespuestaAutorizacion> AutorizacionComprobante(string claveAcceso);
     }
 }
