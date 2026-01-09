@@ -6,7 +6,7 @@
         //{
         //    var mensaje = string.Empty;
         //    var xmlByte = File.ReadAllBytes(path);
-        //    CSRIws sri = new ();
+        //    CSRIws sri = new();
 
         //    CRespuestaRecepcion resRecepcion = sri.RecepcionComprobanteOnLinePrueba(Convert.ToBase64String(xmlByte));
 
@@ -26,6 +26,7 @@
 
         //    return resRecepcion;
         //}
+
         public async Task<CRespuestaRecepcion> RecepcionComprobantePrueba(string path)
         {
             var mensaje = string.Empty;
@@ -53,10 +54,11 @@
 
         //public CRespuestaAutorizacion AutorizacionComprobantePrueba(string claveAcceso)
         //{
-        //    CSRIws sri = new ();
+        //    CSRIws sri = new();
         //    CRespuestaAutorizacion resAutorizacion = sri.AutorizacionComprobanteOnLinePrueba(claveAcceso);
         //    return resAutorizacion;
         //}
+
         public async Task<CRespuestaAutorizacion> AutorizacionComprobantePrueba(string claveAcceso)
         {
             CSRIws sri = new();

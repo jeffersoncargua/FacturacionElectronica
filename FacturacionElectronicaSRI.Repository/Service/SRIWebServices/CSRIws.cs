@@ -72,7 +72,7 @@ namespace FacturacionElectronicaSRI.Repository.Service.SRIWebServices
             request.Content = new StringContent(soapEnvelopeXml.OuterXml, Encoding.UTF8, "application/xml");
 
             // Esta funcion permite enviar la respuesta de la solicitud realizada al sri en la recepción del documento para continuar con la facturacion electrónica.
-            HttpResponseMessage response = await client.SendAsync(request);
+            HttpResponseMessage response = client.Send(request);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             var soapResult = XDocument.Parse(responseContent);
