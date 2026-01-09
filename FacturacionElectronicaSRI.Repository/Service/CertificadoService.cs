@@ -4,7 +4,6 @@ using FirmaXadesNetCore.Crypto;
 using FirmaXadesNetCore.Signature;
 using FirmaXadesNetCore.Signature.Parameters;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
 using org.bouncycastle.util;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
@@ -15,10 +14,11 @@ namespace FacturacionElectronicaSRI.Repository.Service
     {
         internal X509Certificate2? _x509Certificate2;
         private readonly IHostingEnvironment _webhostingEnvironment;
-        private readonly ILogger<CertificadoService> _logger;
-        public CertificadoService(ILogger<CertificadoService> logger, IHostingEnvironment webhostingEnvironment)
+        // private readonly ILogger<CertificadoService> _logger;
+        // public CertificadoService(ILogger<CertificadoService> logger, IHostingEnvironment webhostingEnvironment)
+        public CertificadoService(IHostingEnvironment webhostingEnvironment)
         {
-            _logger = logger;
+            // _logger = logger;
             _webhostingEnvironment = webhostingEnvironment;
         }
 
