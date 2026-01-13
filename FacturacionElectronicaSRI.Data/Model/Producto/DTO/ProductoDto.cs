@@ -8,6 +8,8 @@ namespace FacturacionElectronicaSRI.Data.Model.Producto.DTO
 
         public string? PathImagen { get; set; }
 
+        public string? PathFileImagen { get; set; }
+
         public IFormFile? File { get; set; }
 
         public required string CodigoPrincipal { get; set; }

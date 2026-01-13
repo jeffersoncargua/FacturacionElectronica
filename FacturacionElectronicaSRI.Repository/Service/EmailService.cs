@@ -1,6 +1,7 @@
 ﻿using FacturacionElectronica.Utility;
 using FacturacionElectronicaSRI.Repository.Service.IService;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 
@@ -9,9 +10,11 @@ namespace FacturacionElectronicaSRI.Repository.Service
     public class EmailService : IEmailService
     {
         private readonly EmailConfig _emailConfig;
-        public EmailService(EmailConfig emailConfig)
+        // public EmailService(EmailConfig emailConfig)
+        public EmailService(IOptions<EmailConfig> emailConfig)
         {
-            _emailConfig = emailConfig;
+            // _emailConfig = emailConfig;
+            _emailConfig = emailConfig.Value;
         }
 
         public void SendEmail(Message message)

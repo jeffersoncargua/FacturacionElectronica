@@ -5,6 +5,7 @@ using FacturacionElectronicaSRI.Data.Model.Cliente.DTO;
 using FacturacionElectronicaSRI.Data.Model.Kushki.DTO;
 using FacturacionElectronicaSRI.Data.Model.Venta.DTO;
 using FacturacionElectronicaSRI.Repository.Service.IService;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
@@ -18,9 +19,11 @@ namespace FacturacionElectronicaSRI.Repository.Service
         private readonly KushkiConfig _kushkiConfig;
         internal Response _response;
 
-        public KushkiService(KushkiConfig kushkiConfig, ApplicationDbContext db)
+        // public KushkiService(KushkiConfig kushkiConfig, ApplicationDbContext db)
+        public KushkiService(IOptions<KushkiConfig> kushkiConfig, ApplicationDbContext db)
         {
-            _kushkiConfig = kushkiConfig;
+            // _kushkiConfig = kushkiConfig;
+            _kushkiConfig = kushkiConfig.Value;
             _db = db;
             this._response = new();
         }
@@ -269,6 +272,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("Public-Merchant-Id", _kushkiConfig.PublicMerchantId);
+                // client.DefaultRequestHeaders.Add("Public-Merchant-Id", "c3c743da04dc4ce785eab0c2007cbc01");
 
                 var json = JsonConvert.SerializeObject(requestTokenDto);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");

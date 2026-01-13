@@ -12,6 +12,7 @@ namespace FacturacionElectronicaSRI.Data.Entity
         public int Id { get; set; }
 
         public string? PathImagen { get; set; }
+        public string? PathFileImagen { get; set; }
 
         public required string CodigoPrincipal { get; set; }
 

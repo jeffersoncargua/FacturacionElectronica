@@ -35,6 +35,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _db;
         protected Response _response;
+
         public VentaService(IServiceSRI serviceSRI, IProductoRepository productoRepository, IDetalleVentaRepository detalleVentaRepository, IComprobanteVentaRepository comprobanteVentaRepository, IClienteRepository clienteRepository, IEmpresaRepository empresaRepository, IRutasFacturacionRepository rutasFacturacionRepository, IHostingEnvironment webHostingEnvironment, IEmailService emailService, IKushkiService kushkiService, IMapper mapper, ApplicationDbContext db)
         {
             _serviceSRI = serviceSRI;
@@ -1323,7 +1324,7 @@ namespace FacturacionElectronicaSRI.Repository.Service
                     return _response;
                 }
 
-                var message = new Message([comprobanteDb.Cliente!.Email], "Es una prueba del correo", "Si lees esto, es porque salió bien =)", [rutaXmlDb.RutaAutorizados!, rutaXmlDb.PathXMLPDF!]);
+                var message = new Message([comprobanteDb.Cliente!.Email], "Factura Electrónica", "Muchas Gracias por su compra", [rutaXmlDb.RutaAutorizados!, rutaXmlDb.PathXMLPDF!]);
                 _emailService.SendEmail(message);
 
                 _response.IsSuccess = true;

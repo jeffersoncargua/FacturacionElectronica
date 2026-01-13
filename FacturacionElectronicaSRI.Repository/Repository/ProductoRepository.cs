@@ -31,8 +31,7 @@ namespace FacturacionElectronicaSRI.Repository.Repository
         {
             try
             {
-                // var rutaCarpeta = _webHostingEnviroment.ContentRootPath + "\\Archivos";
-                var rutaCarpeta = _webHostingEnviroment.WebRootPath;
+                var rutaCarpeta = _webHostingEnviroment.WebRootPath; // Este permite acceder a la ruta de wwwroot de la aplicacion web api
                 var productoDb = await this.GetAsync(u => u.CodigoPrincipal == productoDto.CodigoPrincipal || u.CodigoAuxiliar == productoDto.CodigoAuxiliar || u.Descripcion.Equals(productoDto.Descripcion), tracked: false);
                 if (productoDb == null)
                 {
@@ -50,10 +49,11 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                         using var fileStream = new FileStream(Path.Combine(carpetaImagen, productoDto.CodigoAuxiliar + extension), FileMode.Create);
                         productoDto.File.CopyTo(fileStream);
 
-                        // string pathImage = @"\Imagen\" + productoDto.CodigoPrincipal + extension;
-                        string pathImage = _appUrl.Url + @"/Imagen/" + productoDto.CodigoPrincipal + extension;
+                        string pathImage = _appUrl.Url + @"/Imagen/" + productoDto.CodigoPrincipal + extension; // Esto solo en desarrollo para que se almacene de forma local
+                        // string pathImage = "https://facturacionapinet.runasp.net" + @"/Imagen/" + productoDto.CodigoPrincipal + extension; // Esto solo en produccion para que se almacene en el servidor
 
                         productoDto.PathImagen = pathImage;
+                        productoDto.PathFileImagen = Path.Combine(carpetaImagen, productoDto.CodigoPrincipal + extension); // es la ubicacion del archivo en el servidor
                     }
 
                     await this.CreateAsyn(_mapper.Map<TblProductos>(productoDto));
@@ -173,6 +173,14 @@ namespace FacturacionElectronicaSRI.Repository.Repository
 
                 if (productoDb != null)
                 {
+                    if (!string.IsNullOrEmpty(productoDb.PathImagen))
+                    {
+                        if (File.Exists(productoDb.PathFileImagen))
+                        {
+                            File.Delete(productoDb.PathFileImagen);
+                        }
+                    }
+
                     await this.DeleteAsync(productoDb);
 
                     _response.IsSuccess = true;
@@ -209,7 +217,6 @@ namespace FacturacionElectronicaSRI.Repository.Repository
 
                     if (productoDto.File != null)
                     {
-                        // var rutaCarpeta = _webHostingEnviroment.ContentRootPath + "\\Archivos";
                         var rutaCarpeta = _webHostingEnviroment.WebRootPath;
                         var extension = Path.GetExtension(productoDto.File.FileName);
                         var carpetaImagen = Path.Combine(rutaCarpeta, @"Imagen");
@@ -219,24 +226,28 @@ namespace FacturacionElectronicaSRI.Repository.Repository
                             Directory.CreateDirectory(carpetaImagen);
                         }
 
-                        if (productoDto.PathImagen != null)
+                        if (productoDto.PathFileImagen != null)
                         {
-                            var oldPath = Path.Combine(rutaCarpeta, productoDto.PathImagen.Trim('\\'));
-                            File.Delete(productoDto.PathImagen);
+                            if (File.Exists(productoDto.PathFileImagen))
+                            {
+                                File.Delete(productoDto.PathFileImagen);
+                            }
                         }
 
                         using var fileStream = new FileStream(Path.Combine(carpetaImagen, productoDto.CodigoPrincipal + extension), FileMode.Create);
                         productoDto.File.CopyTo(fileStream);
 
-                        // var pathImage = rutaCarpeta + @"\Imagen\" + productoDto.CodigoPrincipal + extension;
-                        var pathImage = _appUrl.Url + @"/Imagen/" + productoDto.CodigoPrincipal + extension;
+                        var pathImage = _appUrl.Url + @"/Imagen/" + productoDto.CodigoPrincipal + extension; // Esto solo en desarrollo para obtener el link de acceso al recurso en el front
+                        // var pathImage = "https://facturacionapinet.runasp.net" + @"/Imagen/" + productoDto.CodigoPrincipal + extension; // Esto solo en produccion para obtener el link de acceso al recurso en el front
                         productoDto.PathImagen = pathImage;
+                        productoDto.PathFileImagen = Path.Combine(carpetaImagen, productoDto.CodigoPrincipal + extension); // es la ubicacion del archivo en el servidor
                     }
 
                     TblProductos productoUpdated = new()
                     {
                         Id = productoDb.Id,
                         PathImagen = productoDto.PathImagen,
+                        PathFileImagen = productoDto.PathFileImagen,
                         CodigoPrincipal = productoDto.CodigoPrincipal,
                         CodigoAuxiliar = productoDto.CodigoAuxiliar,
                         Descripcion = productoDto.Descripcion,
